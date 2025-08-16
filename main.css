@@ -1,0 +1,217 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  
+  /* Banner */
+  .banner {
+    width: 100%;
+    background: rgb(241, 133, 221);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 80px;
+    padding: 0 1rem;
+    position: sticky;
+    top: 0;
+  }
+  
+  .logo-l h3 {
+    text-transform: uppercase;
+    color: #fff;
+  }
+  
+  .menu {
+    display: flex;
+    list-style: none;
+    align-items: center;
+    gap: 1.5rem;
+   margin-right: 16px;
+  }
+  
+  .menu li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    text-transform: uppercase;
+  }
+  
+  .menu li a:hover {
+    color: #9f9f9f;
+  }
+  
+  /* Photo banner */
+  .photo {
+    background: url('https://plus.unsplash.com/premium_photo-1673716788622-d281cc7f1f50?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.1.0') no-repeat center/cover;
+    height: 500px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .font-photo h3 {
+    font-size: 40px;
+    text-transform: uppercase;
+    color: #fff;
+    
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: color 0.3s ease;
+  }
+  
+  .font-photo h3:hover {
+    color: #f937c5;
+  }
+  
+  /* Heading */
+  .headd {
+    text-align: center;
+    margin: 60px 0 30px;
+  }
+  
+  .headd h3 {
+    text-transform: uppercase;
+    font-size: 35px;
+  }
+  
+  .headd p {
+    font-size: 20px;
+    margin-top: 10px;
+    color: #777272;
+  }
+
+
+  .photoforyou {
+    text-align: center; /* จัดทุกอย่างใน div ให้กึ่งกลาง */
+  }
+  
+  .photoforyou img {
+    max-width: 100%;
+    border-radius: 50%; /* กลม */
+    object-fit: cover;
+    height: 380px;
+  }
+  
+  .photoforyou h3 {
+    margin-top: 20px; /* เว้นระยะจากรูปลงมา */
+    font-size: 20px;
+    color: #777272;
+  }
+
+  .photoforyou h3:hover{
+    color: #f937c5;
+  }
+
+  .contactchanel  {
+   text-align: center;
+  }
+  .insta {
+    display: inline-flex;
+    padding: 1rem;
+  }
+  .insta img{
+    height: 70px;
+  }
+
+  .insta a{
+     padding-top: 1.5rem;
+     font-size: 20px;
+     text-decoration: none;
+     color: #777272;
+  }
+
+  .insta a:hover{
+    color: #f937c5;
+  }
+
+  
+  /* Footer */
+  .gn-last {
+    background: #f937c5;
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+  }
+  
+  /* ====================
+     Responsive
+     ==================== */
+  
+/* Navbar */
+.banner {
+  width: 100vw;
+  height: 60px;
+  background-color: f937c5;
+  display: flex;
+  justify-content: space-between; /* logo ซ้าย, menu+hamburger ขวา */
+  align-items: center;
+  padding: 0 16px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1200;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Hamburger */
+.hamburger {
+  font-size: 30px;
+  color: #000;
+  cursor: pointer;
+  display: none; /* แสดงเฉพาะมือถือ */
+  z-index: 1300;
+}
+
+/* Mobile: แสดง Hamburger, ซ่อนเมนูปกติ */
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .menu {
+    position: fixed;
+    top: 0;
+    right: -250px; /* เริ่มซ่อนอยู่ข้างนอก */
+    width: 250px;
+    height: 100vh;
+    background: rgb(241, 133, 221);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top: 60px;
+    gap: 0;
+    transition: right 0.4s ease;
+    z-index: 1100;
+    margin: 0;
+  }
+
+  .menu li {
+    padding: 15px 0;
+    width: 100%;
+    text-align: center;
+  }
+
+  .menu li a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    display: block;
+    width: 100%;
+  }
+
+  .menu li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* แสดง Sidebar เมื่อกด Hamburger */
+  .menu.show {
+    right: 0;
+  }
+}
+
+/* ให้เนื้อหาไม่ซ้อน Navbar */
+.content {
+  padding-top: 60px;
+}

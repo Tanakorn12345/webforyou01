@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pimmie Webpage</title>
+  <link rel="stylesheet" href="main.css" />
+</head>
+<body>
+
+  <div class="banner">
+    <div class="logo-l">
+      <h3>PIMMIE WEBPAGE</h3>
+    </div>
+
+    <div class="hamburger" onclick="toggleMenu()">
+      ☰
+    </div>
+
+    <ul class="menu">
+      <li><a href="/index.html">Home</a></li>
+      <li><a href="#">Content</a></li>
+      
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <div class="photo">
+    <div class="font-photo">
+      <h3>MY LOVE</h3>
+    </div>
+  </div>
+
+  <div class="headd">
+    <h3>My profile</h3>
+    <p>Detail about you</p>
+  </div>
+    
+    <div class="photoforyou">
+        <img src="/A8A3B7BB-C8EE-4530-B690-1AC8E6EC6921.JPG" alt="">
+        <h3>PHIMPHITCHA ONPIAN</h3>
+        
+    </div>
+
+    <div class="contactchanel">
+         <div class="insta">
+            <img src="/2227.jpg" alt="">
+            <a href="https://www.instagram.com/pp.post.tt?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==">pp.post.tt</a>
+         </div>
+    </div>
+  
+
+  <div class="gn-last">
+    <div class="last">
+      Tanakorn Tipwarreerattana &copy;
+      <script>document.write(new Date().getFullYear())</script>. All Right Reserved
+    </div>
+  </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.querySelector('.hamburger');
+      const menu = document.querySelector('.menu');
+    
+      // ฟังก์ชันเปิด/ปิด Sidebar
+      function toggleMenu() {
+        menu.classList.toggle('show');
+      }
+    
+      // เปิด/ปิด Sidebar เมื่อคลิกปุ่ม Hamburger
+      hamburger.addEventListener('click', toggleMenu);
+    
+      // ปิด Sidebar เมื่อคลิกลิงก์เมนู
+      menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('show');
+        });
+      });
+    });
+    </script>
+</body>
+</html>

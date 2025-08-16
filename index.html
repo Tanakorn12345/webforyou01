@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pimmie Webpage</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="banner">
+    <div class="logo-l">
+      <h3>PIMMIE WEBPAGE</h3>
+    </div> 
+    <div class="hamburger" onclick="toggleMenu()">
+      ☰
+    </div>
+  
+
+
+    <ul class="menu">
+      <li><a href="#">Home</a></li>
+      <li><a href="#">Content</a></li>
+     
+      <li><a href="/contact.html">Contact</a></li>
+    </ul>
+  </div>
+
+  <div class="photo">
+    <div class="font-photo">
+      <h3>MY LOVE</h3>
+    </div>
+  </div>
+
+  <div class="headd">
+    <h3>My card</h3>
+    <p>Look their pictures</p>
+  </div>
+
+  <div class="background1">
+    <div class="picture">
+      <div class="pic1">
+        <img src="/A8A3B7BB-C8EE-4530-B690-1AC8E6EC6921.JPG" alt="">
+        <h3>PICTURE 1</h3>
+        <p>ภาพไปทะเลล</p>
+      </div>
+
+      <div class="pic2">
+        <img src="/435FE35A-D37F-4D08-9909-E82E56FE0785.JPG" alt="">
+        <h3>PICTURE 2</h3>
+        <p>ดูหนังงๆ</p>
+      </div>
+
+      <div class="pic3">
+        <img src="/19C69CF1-1B5B-4AB8-AD15-EE9CB71AB9E6.JPG" alt="">
+        <h3>PICTURE 3</h3>
+        <p>โฟโต้บูธธ</p>
+      </div>
+
+      
+    </div>
+    
+  </div>
+  <div class="vd">
+    <h3>MY VIDEO</h3>
+    <p>คลิปป</p>
+     <video width="320" height="240" controls muted >
+       <source src="/Video 2.MP4" type="video/mp4">
+     </video>
+  </div>
+  <div class="gn-last">
+    <div class="last">
+      Tanakorn Tipwarreerattana &copy;
+      <script>document.write(new Date().getFullYear())</script>. All Right Reserved
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const hamburger = document.querySelector('.hamburger');
+      const menu = document.querySelector('.menu');
+    
+      // ฟังก์ชันเปิด/ปิด Sidebar
+      function toggleMenu() {
+        menu.classList.toggle('show');
+      }
+    
+      // เปิด/ปิด Sidebar เมื่อคลิกปุ่ม Hamburger
+      hamburger.addEventListener('click', toggleMenu);
+    
+      // ปิด Sidebar เมื่อคลิกลิงก์เมนู
+      menu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+          menu.classList.remove('show');
+        });
+      });
+    });
+    </script>
+    
+  
+</body>
+</html>
