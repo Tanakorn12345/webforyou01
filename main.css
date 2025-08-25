@@ -126,6 +126,34 @@
     color: #f937c5;
   }
 
+  .mysc {
+     display: block;
+  }
+
+  .mysc h3{
+     margin: 1rem;
+     font-size: 30px;
+     font-weight: bold;
+    text-transform: uppercase;
+  }
+
+  .mysc p{
+    margin: 1rem;
+    
+    font-size: 20px;
+    color: #777272;
+  }
+
+  .photosc img{
+    max-width: 100%;
+    height: 550px;
+    padding: 1rem;
+    display: block;
+    margin: 0 auto;
+   border-radius: 5%;
+    
+  }
+
   
   /* Footer */
   .gn-last {
@@ -209,6 +237,18 @@
   .menu.show {
     right: 0;
   }
+  
+  .photosc img{
+    max-width: 100%;
+    height: 380px;
+    padding: 1.5rem;
+    display: block;
+    margin: 0 auto;
+   border-radius: 10%;
+
+    
+  }
+
 }
 
 /* ให้เนื้อหาไม่ซ้อน Navbar */

@@ -19,8 +19,8 @@
 
 
     <ul class="menu">
-      <li><a href="#">Home</a></li>
-      <li><a href="#">Content</a></li>
+      <li><a href="/index.html">Content</a></li>
+      
      
       <li><a href="/contact.html">Contact</a></li>
     </ul>
@@ -48,13 +48,31 @@
       <div class="pic2">
         <img src="/435FE35A-D37F-4D08-9909-E82E56FE0785.JPG" alt="">
         <h3>PICTURE 2</h3>
-        <p>ดูหนังงๆ</p>
+        <p>ดูหนังงๆ</p> <br>
+        <p>2/08/68</p>
       </div>
 
       <div class="pic3">
         <img src="/19C69CF1-1B5B-4AB8-AD15-EE9CB71AB9E6.JPG" alt="">
         <h3>PICTURE 3</h3>
         <p>โฟโต้บูธธ</p>
+        <p>2/08/68</p>
+      </div>
+
+
+      <div class="pic3">
+        <img src="/IMG_0640.JPG" alt="">
+        <h3>PICTURE 4</h3>
+        <p>เล็บสีใหม่ๆ</p>
+        <p>22/08/68</p>
+      </div>
+
+
+      <div class="pic3">
+        <img src="/IMG_0643.JPG" alt="">
+        <h3>PICTURE 5</h3>
+        <p>ก่อนกินบาบีก้อนๆ</p>
+        <p>22/08/68</p>
       </div>
 
       
@@ -64,10 +82,30 @@
   <div class="vd">
     <h3>MY VIDEO</h3>
     <p>คลิปป</p>
+    
      <video width="320" height="240" controls muted >
        <source src="/Video 2.MP4" type="video/mp4">
      </video>
+     <p>2/08/68</p>
+     <p>photobooth at Central Lardpro</p>
   </div>
+  <div class="wrapper">
+   <div class="background2">
+     <div class="texttolove">
+       <h3>มีอะไรจะบอกนะคับ</h3> <br>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h4>|</h4>
+       <h5 id="texti">กดปุ่มนี้ดูสิ</h5>
+       <button onclick="changeText()">กดเลยย</button>
+     </div>
+   </div>
+  </div>
+    
   <div class="gn-last">
     <div class="last">
       Tanakorn Tipwarreerattana &copy;
@@ -75,6 +113,22 @@
     </div>
   </div>
   <script>
+    
+    function changeText(){
+      let element = document.getElementById("texti");
+
+      if (element.innerText === "กดปุ่มนี้ดูสิ") {
+        element.innerText = "pen fan kan mai kub 😽"
+      } else{
+        element.innerHTML = "กดปุ่มนี้ดูสิ"
+      }
+    }
+
+
+
+
+
+
     document.addEventListener('DOMContentLoaded', () => {
       const hamburger = document.querySelector('.hamburger');
       const menu = document.querySelector('.menu');
