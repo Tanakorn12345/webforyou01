@@ -14,7 +14,7 @@
     /* 🌸 Global */
     body {
       background: linear-gradient(180deg, #fff5fa, #ffffff);
-      font-family: 'Segoe UI', sans-serif;
+      font-family: 'Prompt', sans-serif;
     }
 
     /* 🎀 Navbar */
@@ -79,6 +79,8 @@
       font-size: 0.9rem;
     }
   </style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 
 </head>
 
@@ -106,9 +108,65 @@
   </nav>
 
   <!-- 💕 Header -->
-  <div class="hero text-center p-5">
-    <h3 class="display-5 fw-bold text-danger">MY LOVE </h3>
- 
+  <div class="hero position-relative text-center" style="overflow: hidden; min-height: 350px; display: flex; align-items: center; justify-content: center;">
+    
+    <!-- Bootstrap Carousel Background -->
+    <div id="heroCarousel" class="carousel slide carousel-fade position-absolute w-100 h-100 top-0 start-0" data-bs-ride="carousel" style="opacity: 0.9;">
+      
+      <!-- Indicators -->
+      <div class="carousel-indicators" style="z-index: 3; margin-bottom: 10px;">
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="3"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="4"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="5"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="6"></button>
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="7"></button>
+      </div>
+
+      <div class="carousel-inner h-100">
+        <div class="carousel-item active h-100">
+          <img src="/08BCC940-2DFE-4659-8255-58E8376D3DB7.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/public/6D3A728D-2691-4C74-854A-56CD56D2CC45.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/3monthspic/0408D242-0732-48F6-8DA5-1285808BC6E5.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/1854EF76-1277-4D04-A9C4-DDAA523974CA.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/5momthspic/57D2B9EC-CBC2-4D98-AF29-13CABE2B595D.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/6monthspic/overview pic 6 month.jpg" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/7monthspic/overview pic 7 month.jpg" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/8monthspic/IMG_6558.JPG" class="d-block w-100 h-100" style="object-fit: cover;">
+        </div>
+      </div>
+      
+      <!-- Controls -->
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev" style="z-index: 3;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next" style="z-index: 3;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <!-- Center Text overlay -->
+    <div class="hero-content" style="position: relative; z-index: 2; background: rgba(255, 255, 255, 0.85); padding: 15px 50px; border-radius: 50px; box-shadow: 0 10px 25px rgba(255,105,180,0.3); backdrop-filter: blur(8px);">
+      <h3 class="display-5 fw-bold text-danger m-0" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">MY LOVE</h3>
+    </div>
   </div>
 
   <!-- 💗 Section -->
@@ -216,9 +274,18 @@
         </div>
       </div>
 
-
-      
-
+      <div class="col-6 col-sm-4 col-md-3 pb-5">
+        <div class="card h-100">
+          <img src="/8monthspic/overview pic 8 month.jpg" class="card-img-top">
+          <div class="card-body text-center">
+            <h5 class="card-title">8 Month Anniversary</h5>
+            <p class="text-muted">26/04/69</p>
+            <button onclick="goToPage('ani8.html')" class="button-color rounded-3 text-white">
+              click 💖
+            </button>
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

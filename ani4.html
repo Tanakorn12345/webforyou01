@@ -12,7 +12,7 @@
         /* 🎄 Global */
         body {
             background: linear-gradient(180deg, #fff5f7, #ffffff);
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Prompt', sans-serif;
             overflow-x: hidden;
         }
 
@@ -115,6 +115,8 @@
           }
           
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -130,46 +132,82 @@
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark navbar-pink">
-        <div class="container-fluid">
-          <a class="navbar-brand fw-bold text-white" href="#">
-             PIMMIE WEBPAGE
-          </a>
-      
-          <!-- ปุ่ม hamburger (มือถือ) -->
-          <button class="navbar-toggler" type="button" 
-                  data-bs-toggle="collapse" 
-                  data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-      
-          <!-- เมนู -->
-          <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-              <li class="nav-item">
-                <a class="nav-link text-white fw-semibold" href="/index.html">
-                  Content
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white fw-semibold" href="/contact.html">
-                   Contact
-                </a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link text-white fw-semibold" href="/mycollection.html">
-                   Myaniversary
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-      
-
-    <!-- Header -->
-    <div class="bg-light text-center p-5">
-        <h3 class="display-5 fw-bold christmas-text">🎄 MY LOVE 🎄</h3>
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold text-white" href="/index.html">PIMMIE WEBPAGE</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link text-white" href="/index.html">Content</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/contact.html">Contact</a></li>
+          <li class="nav-item"><a class="nav-link text-white" href="/mycollection.html">Myaniversary</a></li>
+        </ul>
+      </div>
     </div>
+  </nav>
+
+  <!-- 💕 Header Carousel -->
+  <div class="hero position-relative text-center" style="overflow: hidden; min-height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
+    
+    <div id="heroCarousel4" class="carousel slide carousel-fade position-absolute w-100 h-100 top-0 start-0" data-bs-ride="carousel" style="opacity: 0.85;">
+      
+      <div class="carousel-indicators" style="z-index: 3; margin-bottom: 10px;">
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="0" class="active" aria-current="true"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="1"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="2"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="3"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="4"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="5"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="6"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="7"></button>
+        <button type="button" data-bs-target="#heroCarousel4" data-bs-slide-to="8"></button>
+      </div>
+
+      <div class="carousel-inner h-100">
+        <div class="carousel-item active h-100">
+          <img src="/4monthspic/IMG_8925.jpg" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_8895.jpg" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_6018.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_1367.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_5994.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_6014.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_0091.jpg" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_0087.jpg" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+        <div class="carousel-item h-100">
+          <img src="/4monthspic/IMG_0078.jpg" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
+        </div>
+      </div>
+      
+      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel4" data-bs-slide="prev" style="z-index: 3;">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel4" data-bs-slide="next" style="z-index: 3;">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+      </button>
+    </div>
+
+    <div class="hero-content" style="position: relative; z-index: 2; background: rgba(255, 255, 255, 0.85); padding: 15px 50px; border-radius: 50px; box-shadow: 0 10px 25px rgba(255,105,180,0.3); backdrop-filter: blur(8px);">
+      <h3 class="display-5 fw-bold text-danger m-0" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">MY LOVE</h3>
+    </div>
+  </div>
 
     <h3 class="text-center mt-5 christmas-text">4 Months Anniversary</h3>
     <p class="text-center">เย่่ครบรอบ 4 เดือนแล้วนะคับ เค้าดีใจมากๆเลย รีแคปเดือนที่ 4 กันคั้บ 😻</p>
@@ -374,6 +412,7 @@
 
     </script>
 
+<script src="modal.js"></script>
 </body>
 
 </html>
