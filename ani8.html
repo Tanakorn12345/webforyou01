@@ -7,7 +7,7 @@
     <title>Pimmie Webpage</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
+    <style>
         body {
             /* Songkran Theme Gradient */
             background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
@@ -44,7 +44,7 @@
             text-shadow: 2px 2px 8px rgba(255, 255, 255, 0.6);
             font-weight: 700;
         }
-        
+
         .theme-sub-text {
             color: #2b5876;
             font-weight: 600;
@@ -54,7 +54,7 @@
             background: rgba(255, 255, 255, 0.4);
             backdrop-filter: blur(10px);
             border-bottom: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         .card {
@@ -146,6 +146,7 @@
                 padding: 20px;
                 font-size: 0.95rem;
             }
+
             .card-img {
                 border-right: none;
                 border-bottom: 2px solid rgba(255, 255, 255, 0.7);
@@ -153,6 +154,18 @@
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+
+    <style>
+        @keyframes smoothSlide {
+            0% { transform: scale(1.15) translateX(-4%); }
+            50% { transform: scale(1.15) translateX(4%); }
+            100% { transform: scale(1.15) translateX(-4%); }
+        }
+        .sliding-bg {
+            animation: smoothSlide 25s ease-in-out infinite;
+        }
+    </style>
 
 </head>
 
@@ -163,70 +176,38 @@
     </audio>
 
     <nav class="navbar navbar-expand-lg navbar-dark navbar-theme">
-    <div class="container-fluid">
-      <a class="navbar-brand fw-bold text-white" href="/index.html">PIMMIE WEBPAGE</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link text-white" href="/index.html">Content</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="/contact.html">Contact</a></li>
-          <li class="nav-item"><a class="nav-link text-white" href="/mycollection.html">Myaniversary</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
+        <div class="container-fluid">
+            <a class="navbar-brand fw-bold text-white" href="/index.html">PIMMIE WEBPAGE</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link text-white" href="/index.html">Content</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="/mycollection.html">Myaniversary</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-  <!-- 💕 Header Carousel -->
-  <div class="hero position-relative text-center" style="overflow: hidden; min-height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
-    
-    <div id="heroCarousel8" class="carousel slide carousel-fade position-absolute w-100 h-100 top-0 start-0" data-bs-ride="carousel" style="opacity: 0.85;">
-      
-      <div class="carousel-indicators" style="z-index: 3; margin-bottom: 10px;">
-        <button type="button" data-bs-target="#heroCarousel8" data-bs-slide-to="0" class="active" aria-current="true"></button>
-        <button type="button" data-bs-target="#heroCarousel8" data-bs-slide-to="1"></button>
-        <button type="button" data-bs-target="#heroCarousel8" data-bs-slide-to="2"></button>
-        <button type="button" data-bs-target="#heroCarousel8" data-bs-slide-to="3"></button>
-        <button type="button" data-bs-target="#heroCarousel8" data-bs-slide-to="4"></button>
-      </div>
+    <!-- 💕 Header Carousel -->
+    <div class="hero position-relative text-center"
+        style="overflow: hidden; min-height: 350px; display: flex; align-items: center; justify-content: center; margin-bottom: 2rem;">
 
-      <div class="carousel-inner h-100">
-        <div class="carousel-item active h-100">
-          <img src="/8monthspic/IMG_6558.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="/8monthspic/IMG_6570.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="/8monthspic/IMG_6571.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="/8monthspic/IMG_6572.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
-        </div>
-        <div class="carousel-item h-100">
-          <img src="/8monthspic/IMG_6574.JPG" class="d-block w-100 h-100" style="object-fit: cover; object-position: center;">
-        </div>
-      </div>
-      
-      <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel8" data-bs-slide="prev" style="z-index: 3;">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Previous</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel8" data-bs-slide="next" style="z-index: 3;">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="visually-hidden">Next</span>
-      </button>
-    </div>
+        <img src="M.png" class="position-absolute w-100 h-100 top-0 start-0 sliding-bg" style="object-fit: cover; object-position: center; opacity: 0.85; z-index: 1;">
 
-    <div class="hero-content" style="position: relative; z-index: 2; background: rgba(255, 255, 255, 0.85); padding: 15px 50px; border-radius: 50px; box-shadow: 0 10px 25px rgba(255,105,180,0.3); backdrop-filter: blur(8px);">
-      <h3 class="display-5 fw-bold text-danger m-0" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">MY LOVE</h3>
+    <div class="hero-content"
+            style="position: relative; z-index: 2; background: rgba(255, 255, 255, 0.85); padding: 15px 50px; border-radius: 50px; box-shadow: 0 10px 25px rgba(255,105,180,0.3); backdrop-filter: blur(8px);">
+            <h3 class="display-5 fw-bold text-danger m-0" style="text-shadow: 1px 1px 2px rgba(255,255,255,0.8);">MY
+                LOVE</h3>
+        </div>
     </div>
-  </div>
 
     <div class="container text-center mt-5">
         <h3 class="theme-main-text">8 Months Anniversary</h3>
-        <p class="text-center" style="color:#2b5876; font-weight: 500;">เย่่ครบรอบ 8 เดือนแล้วนะคับ รีแคปเดือนที่ 8 กันคั้บ </p>
+        <p class="text-center" style="color:#2b5876; font-weight: 500;">เย่่ครบรอบ 8 เดือนแล้วนะคับ รีแคปเดือนที่ 8
+            กันคั้บ </p>
     </div>
 
     <div class="container mt-5">
@@ -254,7 +235,9 @@
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="theme-sub-text">Cards 2</h5>
-                                <p class="small">อันนี้ถึงงานแล่วว ปีนี้เราไปที่ส่วนเบญกันนะคั้บ ิอาจจะอ่อมๆหน่อยไม่มัน เพราะว่าเรามากันเช้ามากเลย อยากอยู่กับเทอทั้งวันเลยมาเช้าหนะะ เดี่ยว card ไปต่อไปรู้เรื่องเลย อันนี้เล่นน้ำแบบใสส</p>
+                                <p class="small">อันนี้ถึงงานแล่วว ปีนี้เราไปที่ส่วนเบญกันนะคั้บ ิอาจจะอ่อมๆหน่อยไม่มัน
+                                    เพราะว่าเรามากันเช้ามากเลย อยากอยู่กับเทอทั้งวันเลยมาเช้าหนะะ เดี่ยว card
+                                    ไปต่อไปรู้เรื่องเลย อันนี้เล่นน้ำแบบใสส</p>
                                 <small class="text-muted">13/04/69</small>
                             </div>
                         </div>
@@ -269,7 +252,8 @@
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="theme-sub-text">Cards 3</h5>
-                                <p class="small">อันนี้ก็ยังอยู่ในส่วนเบญเลยน่ารักมาก เทอติดกิ้ปดาวมาด้วยย แอบร้อนนิดๆ แต่ไข่เจียวอร่อย วันนั้นมีหนุ่มติ๋มเลี้ยงมะยงชิดโยเกิร์ตด้วยนะะ  อร่อยอ้ะเป่า
+                                <p class="small">อันนี้ก็ยังอยู่ในส่วนเบญเลยน่ารักมาก เทอติดกิ้ปดาวมาด้วยย แอบร้อนนิดๆ
+                                    แต่ไข่เจียวอร่อย วันนั้นมีหนุ่มติ๋มเลี้ยงมะยงชิดโยเกิร์ตด้วยนะะ อร่อยอ้ะเป่า
                                 </p>
                                 <small class="text-muted">13/04/69</small>
                             </div>
@@ -285,7 +269,8 @@
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="theme-sub-text">Cards 4</h5>
-                                <p class="small">อันนี้เรากำลังไปข้าวสารกันแล้วนะคั้บ มาแวะถ่ายเทสนิดหน่อยเลย ภาพก่อนเราประสบภัย</p>
+                                <p class="small">อันนี้เรากำลังไปข้าวสารกันแล้วนะคั้บ มาแวะถ่ายเทสนิดหน่อยเลย
+                                    ภาพก่อนเราประสบภัย</p>
                                 <small class="text-muted">13/04/69</small>
                             </div>
                         </div>
@@ -302,7 +287,11 @@
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="theme-sub-text">Cards 5</h5>
-                                <p class="small">อันนี้ถึงข้าวสารแล้วนะคั้บ การเล่นของจริงมาแล้วว เปียกยันข้างในเลย น้ำดีครับ ไปจิ้กน้ำมาให้เทอเล่น วันนั้นมีนอยนิดหน่อยคั้บ เทอดื่มน้ำเมาเล็กน้อย ดีนะแบงไปป เล่นกับเทอสนุกน้า เจอแอลด้วย ปีนี้มาตั้ง 4 คนแหนะ ครบๆเลย แต่คนฉีดเทอเยอะมากเลย บางคนเอาน้ำฉีดหลังด้วย แต่เพลงก็ใช่ได้ แต่คนมหาเยอะทั้งประเทศเลย ปีหน้าหาที่ใหม่กันมั้ยย แต่โดยรวมชอบงะ</p>
+                                <p class="small">อันนี้ถึงข้าวสารแล้วนะคั้บ การเล่นของจริงมาแล้วว เปียกยันข้างในเลย
+                                    น้ำดีครับ ไปจิ้กน้ำมาให้เทอเล่น วันนั้นมีนอยนิดหน่อยคั้บ เทอดื่มน้ำเมาเล็กน้อย
+                                    ดีนะแบงไปป เล่นกับเทอสนุกน้า เจอแอลด้วย ปีนี้มาตั้ง 4 คนแหนะ ครบๆเลย
+                                    แต่คนฉีดเทอเยอะมากเลย บางคนเอาน้ำฉีดหลังด้วย แต่เพลงก็ใช่ได้
+                                    แต่คนมหาเยอะทั้งประเทศเลย ปีหน้าหาที่ใหม่กันมั้ยย แต่โดยรวมชอบงะ</p>
                                 <small class="text-muted">13/04/69</small>
                             </div>
                         </div>
@@ -313,9 +302,10 @@
         </div> <!-- ปิด row -->
     </div> <!-- ปิด container -->
 
- <div class="container mt-4 mb-5 text-center">
+    <div class="container mt-4 mb-5 text-center">
         <h4 class="theme-main-text mb-4">MY FIRST CONCERT</h4>
-        <div class="mx-auto" style="max-width: 800px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);">
+        <div class="mx-auto"
+            style="max-width: 800px; border-radius: 20px; overflow: hidden; border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);">
             <!-- กำหนดไฟล์วิดีโอของคุณตรง src="Video 2.MP4" ได้เลยนะครับ -->
             <video width="100%" controls style="display: block; background: rgba(255,255,255,0.4);">
                 <source src="/8monthspic/8m.mp4" type="video/mp4">
@@ -327,13 +317,14 @@
     <div class="py-5 text-center">
         <h3 class="theme-main-text mb-4">มีอะไรจะบอกงับ </h3>
         <div id="texti" class="my-4">
-             กดปุ่มนี้ดูสิ
+            กดปุ่มนี้ดูสิ
         </div>
         <button class="btn hover-btn" onclick="changeText(); startMusic();">จิ้มๆๆ</button>
     </div>
 
     <footer class="text-light text-center py-3 mt-auto">
-        Tanakorn Tipwarreerattana © <script>document.write(new Date().getFullYear())</script> | All Rights Reserved
+        Tanakorn Tipwarreerattana ©
+        <script>document.write(new Date().getFullYear())</script> | All Rights Reserved
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -362,6 +353,7 @@
         }
     </script>
 
-<script src="modal.js"></script>
+    <script src="modal.js"></script>
 </body>
+
 </html>
