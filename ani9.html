@@ -154,6 +154,10 @@
                 border-bottom: 2px solid rgba(255, 255, 255, 0.7);
             }
         }
+        
+        .swal2-popup {
+            border-radius: 25px !important;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
@@ -356,6 +360,29 @@
 
 <p class="theme-main-text mb-4 mt-4" style="font-size: 20px;">อันนี้ตอนติวกัน </p>
 
+
+
+ <div class="mx-auto text-center" id="secretVideoSection" style="max-width: 800px; margin-bottom: 30px;">
+     <p class="theme-main-text mb-3" style="font-size: 20px;">อันนี้เปิดดูนะคับ อิอิ (ต้องใส่รหัสผ่านก่อนน้า)</p>
+     
+     <div style="position: relative; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); border: 1px solid rgba(255, 255, 255, 0.6);">
+         <!-- Overlay Button -->
+         <div id="unlockOverlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; z-index: 10; background: rgba(255,255,255,0.2);">
+             <button class="btn hover-btn" onclick="checkPassword()" style="box-shadow: 0 4px 15px rgba(0,0,0,0.2);">กดเพื่อกรอกรหัสผ่าน</button>
+         </div>
+
+         <!-- Blurred Video -->
+         <div id="videoWrapper" style="filter: blur(15px); pointer-events: none; transition: filter 0.5s;">
+             <video width="100%" controls style="display: block; background: rgba(255,255,255,0.4);">
+                 <source src="/9monthspic/IMG_1019.mp4" type="video/mp4">
+                 เบราว์เซอร์ของคุณไม่รองรับการเล่นวิดีโอ
+             </video>
+         </div>
+     </div>
+ </div>
+
+
+
     </div>
 
     <div class="py-5 text-center">
@@ -371,13 +398,19 @@
         <script>document.write(new Date().getFullYear())</script> | All Rights Reserved
     </footer>
 
+    <!-- SweetAlert2 for Beautiful Alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
+        let isHeartTheme = false;
+
         function createConfetti() {
             const c = document.createElement("div");
             c.className = "confetti";
-            const emojis = ["🌊", "🐚", "🦀", "🐠", "🐬", "🌴", "☀️", "🏖️", "🥥"];
+            const seaEmojis = ["🌊", "🐚", "🦀", "🐠", "🐬", "🌴", "☀️", "🏖️", "🥥"];
+            const heartEmojis = ["💖", "💗", "💓", "💕", "💞", "💘", "🩷", "🌸", "🎀"];
+            const emojis = isHeartTheme ? heartEmojis : seaEmojis;
             c.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
             c.style.left = Math.random() * window.innerWidth + "px";
             c.style.animationDuration = Math.random() * 3 + 2 + "s";
@@ -394,6 +427,123 @@
             const el = document.getElementById("texti");
             el.innerText =
                 "สุขสันต์วันครบรอบ 9 เดือนนะคั้บ  แบงรักเทอมากเลยนะะ  เมื่อวานเราอาจจะมีทะเลาะกันบ้างแต่เรารักเทอนะคั้บ รอแต่เทอเฝ้าแต่เทอนะะ รู้มั้ย";
+        }
+
+        function checkPassword() {
+            Swal.fire({
+                title: 'กรุณากรอกรหัสผ่านเพื่อดูวิดีโอ<br><span style="font-size:16px; color:#555;">(มันคือเลขวันครบรอบเดือนนี้คับ)</span>',
+                html: `
+                    <div id="pin-container" style="display: flex; justify-content: center; gap: 8px; margin-top: 15px; margin-bottom: 5px;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                        <input class="pin-box" type="text" inputmode="numeric" maxlength="1" style="width: 40px; height: 50px; text-align: center; font-size: 24px; border-radius: 10px; border: 2px solid #ccc; outline: none; background: transparent; color: #0b3d5c;">
+                    </div>
+                `,
+                showConfirmButton: false,
+                showCancelButton: false,
+                showCloseButton: true,
+                width: '340px',
+                background: 'rgba(255, 255, 255, 0.95)',
+                backdrop: `rgba(0, 92, 151, 0.4)`,
+                customClass: {
+                    title: 'theme-main-text'
+                },
+                didOpen: () => {
+                    const inputs = document.querySelectorAll('.pin-box');
+                    let timeoutIds = [];
+                    
+                    if(inputs.length > 0) {
+                        inputs[0].focus();
+                        inputs[0].style.borderColor = '#3a7bd5';
+                    }
+
+                    inputs.forEach((input, index) => {
+                        input.addEventListener('input', (e) => {
+                            clearTimeout(timeoutIds[index]);
+                            if (input.value) {
+                                input.dataset.real = input.value;
+                                timeoutIds[index] = setTimeout(() => {
+                                    input.value = '•';
+                                }, 350); // Show character for 350ms
+                                
+                                input.style.borderColor = '#ccc';
+                                if (index < inputs.length - 1) {
+                                    inputs[index + 1].focus();
+                                    inputs[index + 1].style.borderColor = '#3a7bd5';
+                                }
+                                checkPin();
+                            } else {
+                                delete input.dataset.real;
+                            }
+                        });
+
+                        input.addEventListener('keydown', (e) => {
+                            if (e.key === 'Backspace' && !input.value && index > 0) {
+                                inputs[index - 1].focus();
+                                inputs[index - 1].value = '';
+                                delete inputs[index - 1].dataset.real;
+                                inputs[index].style.borderColor = '#ccc';
+                                inputs[index - 1].style.borderColor = '#3a7bd5';
+                            }
+                        });
+
+                        input.addEventListener('focus', () => {
+                            inputs.forEach(i => i.style.borderColor = '#ccc');
+                            input.style.borderColor = '#3a7bd5';
+                            if (input.dataset.real) {
+                                input.value = input.dataset.real; // Reveal when focused
+                            }
+                        });
+
+                        input.addEventListener('blur', () => {
+                            input.style.borderColor = '#ccc';
+                            if (input.dataset.real && input.value !== '') {
+                                clearTimeout(timeoutIds[index]);
+                                timeoutIds[index] = setTimeout(() => {
+                                    input.value = '•'; // Mask when blurred after delay
+                                }, 350);
+                            }
+                        });
+                    });
+
+                    function checkPin() {
+                        let entered = Array.from(inputs).map(i => i.dataset.real || i.value).join('');
+                        if (entered.length === 6) {
+                            if (entered === "260569") {
+                                isHeartTheme = true; // Switch to pink hearts
+                                Swal.close();
+                                Swal.fire({
+                                    title: 'เก่งมากก',
+                                    text: 'รหัสถูกต้อง ดูวิดีโอได้เลยคั้บ',
+                                    icon: 'success',
+                                    width: '280px',
+                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                });
+                                document.getElementById("videoWrapper").style.filter = "none";
+                                document.getElementById("videoWrapper").style.pointerEvents = "auto";
+                                document.getElementById("unlockOverlay").style.display = "none";
+                            } else {
+                                Swal.fire({
+                                    title: '<span style="font-size: 20px;">ผิดนะอ้วนน!</span>',
+                                    html: '<span style="font-size: 15px;">กรอกใหม่นะอ้วนน อยากดูอ้ะเป่าา</span>',
+                                    icon: 'error',
+                                    width: '280px',
+                                    padding: '1em',
+                                    background: 'rgba(255, 255, 255, 0.95)',
+                                    confirmButtonColor: '#3a7bd5'
+                                }).then(() => {
+                                    checkPassword(); // Re-open if wrong
+                                });
+                            }
+                        }
+                    }
+                }
+            });
         }
     </script>
 
