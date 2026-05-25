@@ -9,19 +9,20 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            /* Sea/Ocean Theme Gradient */
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            /* Sea/Ocean Theme Background */
+            background: #e0f2fe url('sea_bg.png') no-repeat center center fixed;
+            background-size: cover;
             font-family: 'Prompt', sans-serif;
             overflow-x: hidden;
             color: #0b3d5c;
         }
 
         .navbar-theme {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(90deg, rgba(0, 92, 151, 0.85), rgba(54, 209, 220, 0.85));
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 6px 20px rgba(0, 50, 100, 0.25);
         }
 
         .confetti {
@@ -116,10 +117,11 @@
         }
 
         footer {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
+            background: linear-gradient(90deg, rgba(54, 209, 220, 0.85), rgba(0, 92, 151, 0.85));
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
             border-top: 1px solid rgba(255, 255, 255, 0.4);
-            color: #005c97 !important;
+            color: white !important;
             font-weight: 600;
         }
 
@@ -283,7 +285,7 @@
                         <div class="col-8">
                             <div class="card-body">
                                 <h5 class="theme-sub-text">Cards 5</h5>
-                                <p class="small">อันนี้เราเล่นน้ำทะเลกันครั้งแรกก คั้บ สนุกมากเลย ค่อนข้างดี ในน้ำหนะ 555</p>
+                                <p class="small">อันนี้เราเล่นน้ำทะเลกันครั้งแรกก คั้บ สนุกมากเลย ค่อนข้างดี ในน้ำหนะ 555  อยากกไปว่ายน้ำก้วยกันนะคั้บ เอาแบบสระว่ายน้ำว่ายนานนนไปเลยดีมั้ยย</p>
                                 <small class="text-muted">20/05/69</small>
                             </div>
                         </div>
@@ -391,7 +393,7 @@
         function changeText() {
             const el = document.getElementById("texti");
             el.innerText =
-                "สุขสันต์วันครบรอบ 9 เดือนนะคั้บ  แบงรักเทอมากเลยนะะ";
+                "สุขสันต์วันครบรอบ 9 เดือนนะคั้บ  แบงรักเทอมากเลยนะะ  เมื่อวานเราอาจจะมีทะเลาะกันบ้างแต่เรารักเทอนะคั้บ รอแต่เทอเฝ้าแต่เทอนะะ รู้มั้ย";
         }
     </script>
 
