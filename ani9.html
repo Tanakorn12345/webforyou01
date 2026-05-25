@@ -383,7 +383,43 @@
 
 
 
+ </div>
+
+    <!-- ✅ Send Message Form -->
+    <div class="row justify-content-center text-start mt-5">
+      <div class="col-md-10 col-lg-8 mx-auto">
+        <div style="border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.6); backdrop-filter: blur(8px); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); padding: 30px;">
+          <h4 class="theme-main-text fw-bold text-center mb-3">มีอะไรอยากบอกเค้ามั้ยย</h4>
+          <p class="text-center mb-4" style="color: #2b5876; font-weight: 500;">พิมเลยยจิ</p>
+          
+          <form action="https://api.web3forms.com/submit" method="POST">
+            <!-- 💡 นำ Access Key จากเว็บ Web3Forms มาใส่แทนที่ YOUR_ACCESS_KEY_HERE -->
+            <input type="hidden" name="access_key" value="5098be84-f298-418c-bcf1-0c3bd89de8de">
+            
+            <div class="mb-3">
+              <label for="name" class="form-label fw-bold" style="color: #004d80;">ชื่อของคุณ:</label>
+              <input type="text" class="form-control rounded-pill" name="name" id="name" placeholder="ใส่ชื่อตรงนี้นะคั้บ..." required style="background: rgba(255,255,255,0.9); border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+            </div>
+            
+            <div class="mb-4">
+              <label for="message" class="form-label fw-bold" style="color: #004d80;">ข้อความที่อยากบอก:</label>
+              <textarea class="form-control" style="border-radius: 15px; background: rgba(255,255,255,0.9); border: none; box-shadow: 0 2px 10px rgba(0,0,0,0.05);" name="message" id="message" rows="4" placeholder="พิมพ์ความในใจที่อยากบอกได้เลย..." required></textarea>
+            </div>
+
+            <!-- เปลี่ยนหน้าไปยังหน้าเดิมหลังส่งเสร็จ -->
+            <input type="hidden" name="redirect" value="https://webforyou02.onrender.com/ani9.html">
+
+            <div class="text-center">
+              <button type="submit" class="btn hover-btn px-5 py-2 fw-bold" style="width: 100%;">
+                ส่งข้อความเลย 🚀
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
+
+</div>
 
     <div class="py-5 text-center">
         <h3 class="theme-main-text mb-4">มีอะไรจะบอกงับ </h3>
