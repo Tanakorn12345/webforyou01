@@ -1,0 +1,20 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-prompt bg-white text-gray-800 min-h-screen flex flex-col;
+  }
+}
+
+@layer utilities {
+  .sliding-bg {
+    animation: smoothSlide 25s ease-in-out infinite;
+  }
+  @keyframes smoothSlide {
+    0% { transform: scale(1.15) translateX(-4%); }
+    50% { transform: scale(1.15) translateX(4%); }
+    100% { transform: scale(1.15) translateX(-4%); }
+  }
+}
