@@ -9,21 +9,27 @@ export default function Admin() {
   const [months, setMonths] = useState([]);
   const [cards, setCards] = useState([]);
   const [activeMonth, setActiveMonth] = useState(null);
+  const [siteSettings, setSiteSettings] = useState(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) fetchMonths();
+      if (session) { fetchMonths(); fetchSiteSettings(); }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) fetchMonths();
+      if (session) { fetchMonths(); fetchSiteSettings(); }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  const fetchSiteSettings = async () => {
+    const { data } = await supabase.from('site_settings').select('*').eq('id', 1).single();
+    if (data) setSiteSettings(data);
+  };
 
   const fetchMonths = async () => {
     const { data } = await supabase.from('months').select('*').order('month_date', { ascending: true, nullsFirst: false }).order('created_at', { ascending: true });
@@ -45,6 +51,137 @@ export default function Admin() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
+  };
+
+  const showSettingsForm = () => {
+    Swal.fire({
+      title: 'จัดการพื้นหลังหน้า Login',
+      html: `
+        <div class="flex flex-col gap-4 text-left">
+          <div class="w-full aspect-video bg-gray-100 rounded-xl overflow-hidden relative shadow-inner mb-2" id="swal-s-preview-container">
+            ${siteSettings?.login_bg_url ? `
+              <img id="swal-s-preview-img" src="${siteSettings.login_bg_url}" class="w-full h-full object-cover" style="filter: blur(${siteSettings.login_bg_blur || 0}px); transform: scale(1.1);" />
+              <div id="swal-s-preview-overlay" class="absolute inset-0 bg-black" style="opacity: ${(siteSettings.login_bg_overlay_opacity ?? 50) / 100}"></div>
+            ` : `
+              <div class="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
+            `}
+          </div>
+
+          <div class="border-2 border-dashed border-pink-300 rounded-xl p-4 bg-pink-50/50 hover:bg-pink-50 transition-colors">
+            <label class="block text-sm font-bold text-pink-600 mb-2 text-center cursor-pointer">อัปโหลดรูปภาพใหม่ 📸</label>
+            <input type="file" id="swal-s-file" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600 file:cursor-pointer file:transition-colors cursor-pointer"/>
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">ความเบลอ (Blur): <span id="swal-s-blur-val" class="text-pink-500">${siteSettings?.login_bg_blur || 0}px</span></label>
+            <input type="range" id="swal-s-blur" min="0" max="20" value="${siteSettings?.login_bg_blur || 0}" class="w-full accent-pink-500">
+          </div>
+
+          <div>
+            <label class="block text-sm font-bold text-gray-700 mb-1">ความมืด/สว่าง (Overlay): <span id="swal-s-overlay-val" class="text-pink-500">${siteSettings?.login_bg_overlay_opacity ?? 50}%</span></label>
+            <input type="range" id="swal-s-overlay" min="0" max="100" value="${siteSettings?.login_bg_overlay_opacity ?? 50}" class="w-full accent-pink-500">
+          </div>
+
+          <div class="mt-2 text-right">
+            <button id="swal-s-remove-btn" class="text-red-500 hover:text-red-700 text-sm font-bold underline cursor-pointer">ลบรูปภาพพื้นหลังปัจจุบัน</button>
+          </div>
+          <input type="hidden" id="swal-s-remove-flag" value="false">
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#d1d5db',
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl w-[500px]' },
+      didOpen: () => {
+        const blurInput = document.getElementById('swal-s-blur');
+        const overlayInput = document.getElementById('swal-s-overlay');
+        const blurVal = document.getElementById('swal-s-blur-val');
+        const overlayVal = document.getElementById('swal-s-overlay-val');
+        
+        const previewImg = document.getElementById('swal-s-preview-img');
+        const previewOverlay = document.getElementById('swal-s-preview-overlay');
+
+        blurInput.addEventListener('input', (e) => {
+          blurVal.textContent = e.target.value + 'px';
+          if(document.getElementById('swal-s-preview-img')) {
+             document.getElementById('swal-s-preview-img').style.filter = `blur(${e.target.value}px)`;
+          }
+        });
+        overlayInput.addEventListener('input', (e) => {
+          overlayVal.textContent = e.target.value + '%';
+          if(document.getElementById('swal-s-preview-overlay')) {
+             document.getElementById('swal-s-preview-overlay').style.opacity = e.target.value / 100;
+          }
+        });
+
+        const removeBtn = document.getElementById('swal-s-remove-btn');
+        const removeFlag = document.getElementById('swal-s-remove-flag');
+        const previewContainer = document.getElementById('swal-s-preview-container');
+        const fileInput = document.getElementById('swal-s-file');
+
+        removeBtn.addEventListener('click', () => {
+          removeFlag.value = 'true';
+          previewContainer.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>';
+          fileInput.value = '';
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+           removeFlag.value = 'false';
+           if(e.target.files && e.target.files[0]) {
+             const reader = new FileReader();
+             reader.onload = (eLoad) => {
+               previewContainer.innerHTML = `
+                  <img id="swal-s-preview-img" src="${eLoad.target.result}" class="w-full h-full object-cover" style="filter: blur(${blurInput.value}px); transform: scale(1.1);" />
+                  <div id="swal-s-preview-overlay" class="absolute inset-0 bg-black" style="opacity: ${overlayInput.value / 100}"></div>
+               `;
+             };
+             reader.readAsDataURL(e.target.files[0]);
+           }
+        });
+      },
+      preConfirm: async () => {
+        const fileInput = document.getElementById('swal-s-file');
+        const blur = parseInt(document.getElementById('swal-s-blur').value);
+        const overlay = parseInt(document.getElementById('swal-s-overlay').value);
+        const removeFlag = document.getElementById('swal-s-remove-flag').value === 'true';
+
+        let mediaUrl = siteSettings?.login_bg_url;
+
+        if (removeFlag) {
+          mediaUrl = null;
+        } else if (fileInput.files.length > 0) {
+          const file = fileInput.files[0];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `login_bg_${Math.random()}.${fileExt}`;
+          const { error } = await supabase.storage.from('media').upload(fileName, file);
+          if (error) {
+            Swal.showValidationMessage(`Upload failed: ${error.message}`);
+            return false;
+          }
+          const { data: pubUrl } = supabase.storage.from('media').getPublicUrl(fileName);
+          mediaUrl = pubUrl.publicUrl;
+        }
+
+        return {
+          login_bg_url: mediaUrl,
+          login_bg_blur: blur,
+          login_bg_overlay_opacity: overlay
+        };
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed && result.value) {
+        // If table doesn't have row 1, this will fail unless we insert first, but our SQL script seeds it.
+        const { error } = await supabase.from('site_settings').update(result.value).eq('id', 1);
+        if (error) Swal.fire('Error', error.message, 'error');
+        else {
+          Swal.fire('Success', 'บันทึกการตั้งค่าสำเร็จ', 'success');
+          fetchSiteSettings();
+        }
+      }
+    });
   };
 
   const showMonthForm = (month = null) => {
@@ -382,6 +519,38 @@ export default function Admin() {
             </button>
           </div>
         </div>
+
+      {!activeMonth && (
+        <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">การตั้งค่าเว็บไซต์ (Site Settings)</h2>
+            <button onClick={() => showSettingsForm()} className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5">
+              <Edit size={18} /> จัดการหน้า Login
+            </button>
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100">
+            <div className="w-full md:w-1/3 aspect-video bg-gray-200 rounded-xl overflow-hidden relative shadow-inner">
+              {siteSettings?.login_bg_url ? (
+                <>
+                  <img src={siteSettings.login_bg_url} className="w-full h-full object-cover" style={{ filter: `blur(${siteSettings.login_bg_blur || 0}px)`, transform: 'scale(1.1)' }} />
+                  <div className="absolute inset-0 bg-black" style={{ opacity: (siteSettings.login_bg_overlay_opacity ?? 50) / 100 }}></div>
+                </>
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
+              )}
+            </div>
+            <div className="flex-grow flex flex-col justify-center">
+              <h3 className="text-lg font-bold text-gray-700 mb-2">พื้นหลังหน้าเข้าสู่ระบบ (Login Background)</h3>
+              <p className="text-sm text-gray-500 mb-4">ปรับแต่งรูปภาพพื้นหลัง ความเบลอ และความมืดของหน้าแรกที่ผู้ใช้เห็น</p>
+              <div className="flex gap-4 text-sm font-semibold">
+                <span className="bg-pink-100 text-pink-600 px-3 py-1 rounded-lg">ความเบลอ: {siteSettings?.login_bg_blur || 0}px</span>
+                <span className="bg-gray-200 text-gray-700 px-3 py-1 rounded-lg">ความมืด: {siteSettings?.login_bg_overlay_opacity ?? 50}%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {!activeMonth ? (
         <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
