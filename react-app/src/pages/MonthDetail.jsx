@@ -46,10 +46,28 @@ export default function MonthDetail() {
   const textMainColor = monthData.theme_main_text_color || '#003366';
   const textSubColor = monthData.theme_sub_text_color || '#005b9f';
 
+  // Function to convert hex to rgba
+  const hexToRgba = (hex, opacity) => {
+    let r = 255, g = 255, b = 255;
+    if (hex && /^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+      let c = hex.substring(1).split('');
+      if (c.length === 3) c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+      c = '0x' + c.join('');
+      r = (c >> 16) & 255;
+      g = (c >> 8) & 255;
+      b = c & 255;
+    }
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+  };
+
+  const overlayColor = monthData.bg_overlay_color || '#ffffff';
+  const overlayOpacity = monthData.bg_overlay_opacity !== undefined ? monthData.bg_overlay_opacity : 40;
+  const overlayRgba = hexToRgba(overlayColor, overlayOpacity / 100);
+
   return (
     <div>
       <div className="relative text-center overflow-hidden min-h-[350px] flex items-center justify-center mb-8" style={heroStyle}>
-        <div className="absolute inset-0 bg-white/40 backdrop-blur-[2px]"></div>
+        <div className="absolute inset-0 backdrop-blur-[2px]" style={{ backgroundColor: overlayRgba }}></div>
         <div className="relative z-10 bg-white/85 px-12 py-6 rounded-[50px] shadow-[0_10px_25px_rgba(0,0,0,0.1)] backdrop-blur-sm">
           <h3 className="text-4xl md:text-5xl font-bold m-0" style={{ color: textMainColor, textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>
             {monthData.title}

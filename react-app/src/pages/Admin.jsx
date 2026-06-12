@@ -56,6 +56,42 @@ export default function Admin() {
           <input type="date" id="swal-m-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full text-gray-600" value="${month?.month_date || ''}">
           <input id="swal-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อเดือน (Title)" value="${month?.title || ''}">
           <input id="swal-subtitle" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="คำบรรยายย่อย (Subtitle)" value="${month?.subtitle || ''}">
+          
+          <div class="border border-pink-100 rounded-xl p-4 bg-gray-50/50 mt-2">
+            <h4 class="font-bold text-pink-600 mb-3 text-sm">🎨 การปรับแต่งธีม (Theme)</h4>
+            
+            <div class="grid grid-cols-2 gap-4 mb-3">
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">สีข้อความหลัก</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="swal-main-color" value="${month?.theme_main_text_color || '#003366'}" class="w-8 h-8 rounded cursor-pointer border-0 p-0">
+                  <span class="text-xs text-gray-500 uppercase" id="main-color-hex">${month?.theme_main_text_color || '#003366'}</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">สีคำบรรยาย</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="swal-sub-color" value="${month?.theme_sub_text_color || '#005b9f'}" class="w-8 h-8 rounded cursor-pointer border-0 p-0">
+                  <span class="text-xs text-gray-500 uppercase" id="sub-color-hex">${month?.theme_sub_text_color || '#005b9f'}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">สีแผ่นใส (Overlay)</label>
+                <div class="flex items-center gap-2">
+                  <input type="color" id="swal-overlay-color" value="${month?.bg_overlay_color || '#ffffff'}" class="w-8 h-8 rounded cursor-pointer border-0 p-0">
+                  <span class="text-xs text-gray-500 uppercase" id="overlay-color-hex">${month?.bg_overlay_color || '#ffffff'}</span>
+                </div>
+              </div>
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">ความเข้มแผ่นใส: <span id="opacity-val">${month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40}%</span></label>
+                <input type="range" id="swal-overlay-opacity" min="0" max="100" value="${month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40}" class="w-full accent-pink-500 cursor-pointer">
+              </div>
+            </div>
+          </div>
+
           <div class="border-2 border-dashed border-pink-300 rounded-xl p-4 bg-pink-50/50 hover:bg-pink-50 transition-colors mt-2">
             <label class="block text-sm font-bold text-pink-600 mb-2 text-center cursor-pointer">เลือกภาพปกเดือนใหม่ 📸</label>
             <input type="file" id="swal-m-file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600 file:cursor-pointer file:transition-colors cursor-pointer"/>
@@ -70,6 +106,25 @@ export default function Admin() {
       confirmButtonText: month ? 'บันทึกการแก้ไข' : 'เพิ่มเดือน',
       cancelButtonText: 'ยกเลิก',
       customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
+      didOpen: () => {
+        const opacitySlider = document.getElementById('swal-overlay-opacity');
+        const opacityVal = document.getElementById('opacity-val');
+        if (opacitySlider && opacityVal) {
+          opacitySlider.addEventListener('input', (e) => {
+            opacityVal.textContent = e.target.value + '%';
+          });
+        }
+        
+        ['main', 'sub', 'overlay'].forEach(type => {
+          const colorInput = document.getElementById(`swal-${type}-color`);
+          const hexDisplay = document.getElementById(`${type}-color-hex`);
+          if (colorInput && hexDisplay) {
+            colorInput.addEventListener('input', (e) => {
+              hexDisplay.textContent = e.target.value;
+            });
+          }
+        });
+      },
       preConfirm: async () => {
         const fileInput = document.getElementById('swal-m-file');
         let bgUrl = document.getElementById('swal-bg').value;
@@ -92,6 +147,10 @@ export default function Admin() {
           month_date: document.getElementById('swal-m-date').value || null,
           title: document.getElementById('swal-title').value,
           subtitle: document.getElementById('swal-subtitle').value,
+          theme_main_text_color: document.getElementById('swal-main-color').value,
+          theme_sub_text_color: document.getElementById('swal-sub-color').value,
+          bg_overlay_color: document.getElementById('swal-overlay-color').value,
+          bg_overlay_opacity: parseInt(document.getElementById('swal-overlay-opacity').value),
           bg_image_url: bgUrl,
         }
       }
