@@ -76,8 +76,8 @@ export default function MonthDetail() {
         <div className="absolute inset-0 backdrop-blur-[2px]" style={{ backgroundColor: overlayRgba }}></div>
         
         {/* Text Content */}
-        <div className="relative z-10 bg-white/85 px-12 py-6 rounded-[50px] shadow-[0_10px_25px_rgba(0,0,0,0.1)] backdrop-blur-sm">
-          <h3 className="text-4xl md:text-5xl font-bold m-0" style={{ color: textMainColor, textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>
+        <div className="relative z-10 bg-white/85 px-6 md:px-12 py-4 md:py-6 mx-4 md:mx-0 rounded-[50px] shadow-[0_10px_25px_rgba(0,0,0,0.1)] backdrop-blur-sm">
+          <h3 className="text-3xl md:text-5xl font-bold m-0" style={{ color: textMainColor, textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>
             {monthData.title}
           </h3>
         </div>

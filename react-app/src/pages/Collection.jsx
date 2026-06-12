@@ -26,8 +26,8 @@ export default function Collection() {
     <div>
       <div className="relative text-center overflow-hidden min-h-[350px] flex items-center justify-center mb-8">
         <img src="/M.png" className="absolute w-full h-full top-0 left-0 sliding-bg object-cover object-center opacity-85 z-0" />
-        <div className="relative z-10 bg-white/85 px-12 py-4 rounded-full shadow-[0_10px_25px_rgba(255,105,180,0.3)] backdrop-blur-sm">
-          <h3 className="text-4xl md:text-5xl font-bold text-red-500 drop-shadow-md m-0">MY LOVE</h3>
+        <div className="relative z-10 bg-white/85 px-8 md:px-12 py-4 mx-4 md:mx-0 rounded-full shadow-[0_10px_25px_rgba(255,105,180,0.3)] backdrop-blur-sm">
+          <h3 className="text-3xl md:text-5xl font-bold text-red-500 drop-shadow-md m-0">MY LOVE</h3>
         </div>
       </div>
       
