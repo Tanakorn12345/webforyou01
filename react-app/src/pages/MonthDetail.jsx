@@ -64,10 +64,31 @@ export default function MonthDetail() {
   const overlayOpacity = monthData.bg_overlay_opacity !== undefined ? monthData.bg_overlay_opacity : 40;
   const overlayRgba = hexToRgba(overlayColor, overlayOpacity / 100);
 
+  const imgOpacity = (monthData.bg_overlay_image_opacity ?? 50) / 100;
+  const imgBlur = monthData.bg_overlay_blur ?? 0;
+  const imgBright = monthData.bg_overlay_brightness ?? 100;
+
   return (
     <div>
       <div className="relative text-center overflow-hidden min-h-[350px] flex items-center justify-center mb-8" style={heroStyle}>
+        
+        {/* Color Overlay (Base) */}
         <div className="absolute inset-0 backdrop-blur-[2px]" style={{ backgroundColor: overlayRgba }}></div>
+        
+        {/* Image Overlay */}
+        {monthData.bg_overlay_image_url && (
+          <div className="absolute inset-0 pointer-events-none" 
+               style={{ 
+                 backgroundImage: `url('${monthData.bg_overlay_image_url}')`,
+                 backgroundSize: 'cover',
+                 backgroundPosition: 'center',
+                 opacity: imgOpacity,
+                 filter: `blur(${imgBlur}px) brightness(${imgBright}%)`
+               }}>
+          </div>
+        )}
+
+        {/* Text Content */}
         <div className="relative z-10 bg-white/85 px-12 py-6 rounded-[50px] shadow-[0_10px_25px_rgba(0,0,0,0.1)] backdrop-blur-sm">
           <h3 className="text-4xl md:text-5xl font-bold m-0" style={{ color: textMainColor, textShadow: '1px 1px 2px rgba(255,255,255,0.8)' }}>
             {monthData.title}

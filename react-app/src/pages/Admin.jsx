@@ -79,17 +79,42 @@ export default function Admin() {
 
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <label class="block text-xs text-gray-600 mb-1">สีแผ่นใส (Overlay)</label>
+                <label class="block text-xs text-gray-600 mb-1">สีแผ่นใส (Color Overlay)</label>
                 <div class="flex items-center gap-2">
                   <input type="color" id="swal-overlay-color" value="${month?.bg_overlay_color || '#ffffff'}" class="w-8 h-8 rounded cursor-pointer border-0 p-0">
                   <span class="text-xs text-gray-500 uppercase" id="overlay-color-hex">${month?.bg_overlay_color || '#ffffff'}</span>
                 </div>
               </div>
               <div>
-                <label class="block text-xs text-gray-600 mb-1">ความเข้มแผ่นใส: <span id="opacity-val">${month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40}%</span></label>
+                <label class="block text-xs text-gray-600 mb-1">ความเข้มสีแผ่นใส: <span id="opacity-val">${month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40}%</span></label>
                 <input type="range" id="swal-overlay-opacity" min="0" max="100" value="${month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40}" class="w-full accent-pink-500 cursor-pointer">
               </div>
             </div>
+            
+            <hr class="my-3 border-pink-200 border-dashed">
+            
+            <h4 class="font-bold text-blue-600 mb-2 text-sm">🖼️ รูปภาพแผ่นใส (Image Overlay)</h4>
+            <div class="border border-blue-200 rounded-lg p-2 bg-white mb-2">
+              <label class="block text-xs font-bold text-blue-500 mb-1 cursor-pointer text-center">อัปโหลดรูปแผ่นใส (ไม่บังคับ)</label>
+              <input type="file" id="swal-overlay-file" class="block w-full text-xs text-gray-500 file:mr-2 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer"/>
+              <input type="hidden" id="swal-overlay-bg" value="${month?.bg_overlay_image_url || ''}">
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">ความโปร่งใส: <span id="img-opacity-val">${month?.bg_overlay_image_opacity ?? 50}%</span></label>
+                <input type="range" id="swal-img-opacity" min="0" max="100" value="${month?.bg_overlay_image_opacity ?? 50}" class="w-full accent-blue-500 cursor-pointer">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">ความเบลอ: <span id="img-blur-val">${month?.bg_overlay_blur ?? 0}px</span></label>
+                <input type="range" id="swal-img-blur" min="0" max="20" value="${month?.bg_overlay_blur ?? 0}" class="w-full accent-blue-500 cursor-pointer">
+              </div>
+              <div>
+                <label class="block text-xs text-gray-600 mb-1">ความสว่าง: <span id="img-bright-val">${month?.bg_overlay_brightness ?? 100}%</span></label>
+                <input type="range" id="swal-img-brightness" min="0" max="200" value="${month?.bg_overlay_brightness ?? 100}" class="w-full accent-blue-500 cursor-pointer">
+              </div>
+            </div>
+            
           </div>
 
           <div class="border-2 border-dashed border-pink-300 rounded-xl p-4 bg-pink-50/50 hover:bg-pink-50 transition-colors mt-2">
@@ -107,13 +132,20 @@ export default function Admin() {
       cancelButtonText: 'ยกเลิก',
       customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
       didOpen: () => {
-        const opacitySlider = document.getElementById('swal-overlay-opacity');
-        const opacityVal = document.getElementById('opacity-val');
-        if (opacitySlider && opacityVal) {
-          opacitySlider.addEventListener('input', (e) => {
-            opacityVal.textContent = e.target.value + '%';
-          });
-        }
+        const bindSlider = (sliderId, valId, suffix = '') => {
+          const slider = document.getElementById(sliderId);
+          const valDisplay = document.getElementById(valId);
+          if (slider && valDisplay) {
+            slider.addEventListener('input', (e) => {
+              valDisplay.textContent = e.target.value + suffix;
+            });
+          }
+        };
+
+        bindSlider('swal-overlay-opacity', 'opacity-val', '%');
+        bindSlider('swal-img-opacity', 'img-opacity-val', '%');
+        bindSlider('swal-img-blur', 'img-blur-val', 'px');
+        bindSlider('swal-img-brightness', 'img-bright-val', '%');
         
         ['main', 'sub', 'overlay'].forEach(type => {
           const colorInput = document.getElementById(`swal-${type}-color`);
@@ -127,8 +159,11 @@ export default function Admin() {
       },
       preConfirm: async () => {
         const fileInput = document.getElementById('swal-m-file');
+        const overlayFileInput = document.getElementById('swal-overlay-file');
         let bgUrl = document.getElementById('swal-bg').value;
+        let overlayBgUrl = document.getElementById('swal-overlay-bg').value;
         
+        // Upload Main Image
         if (fileInput.files.length > 0) {
           const file = fileInput.files[0];
           const fileExt = file.name.split('.').pop();
@@ -142,6 +177,20 @@ export default function Admin() {
           bgUrl = pubUrl.publicUrl;
         }
 
+        // Upload Overlay Image
+        if (overlayFileInput.files.length > 0) {
+          const file = overlayFileInput.files[0];
+          const fileExt = file.name.split('.').pop();
+          const fileName = `overlay_${Math.random()}.${fileExt}`;
+          const { data, error } = await supabase.storage.from('media').upload(fileName, file);
+          if (error) {
+            Swal.showValidationMessage(`Overlay upload failed: ${error.message}`);
+            return false;
+          }
+          const { data: pubUrl } = supabase.storage.from('media').getPublicUrl(fileName);
+          overlayBgUrl = pubUrl.publicUrl;
+        }
+
         return {
           page_filename: document.getElementById('swal-filename').value,
           month_date: document.getElementById('swal-m-date').value || null,
@@ -152,6 +201,10 @@ export default function Admin() {
           bg_overlay_color: document.getElementById('swal-overlay-color').value,
           bg_overlay_opacity: parseInt(document.getElementById('swal-overlay-opacity').value),
           bg_image_url: bgUrl,
+          bg_overlay_image_url: overlayBgUrl,
+          bg_overlay_image_opacity: parseInt(document.getElementById('swal-img-opacity').value),
+          bg_overlay_blur: parseInt(document.getElementById('swal-img-blur').value),
+          bg_overlay_brightness: parseInt(document.getElementById('swal-img-brightness').value),
         }
       }
     }).then(async (result) => {
