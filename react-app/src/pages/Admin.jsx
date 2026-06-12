@@ -173,8 +173,8 @@ export default function Admin() {
       }
     }).then(async (result) => {
       if (result.isConfirmed && result.value) {
-        // If table doesn't have row 1, this will fail unless we insert first, but our SQL script seeds it.
-        const { error } = await supabase.from('site_settings').update(result.value).eq('id', 1);
+        const payload = { id: 1, ...result.value };
+        const { error } = await supabase.from('site_settings').upsert(payload);
         if (error) Swal.fire('Error', error.message, 'error');
         else {
           Swal.fire('Success', 'บันทึกการตั้งค่าสำเร็จ', 'success');
