@@ -39,7 +39,7 @@ export default function Navbar({ session }) {
               </div>
             )}
             
-            {session?.user?.email === 'bank@gmail.com' && (
+            {session?.user?.email === 'hoing11111@gmail.com' && (
               <Link to="/admin" className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-4 py-2 font-bold flex items-center gap-2 transition-all shadow-sm">
                 <Settings size={18} /> Admin
               </Link>
@@ -85,7 +85,7 @@ export default function Navbar({ session }) {
                   </span>
                 </div>
               )}
-              {session?.user?.email === 'bank@gmail.com' && (
+              {session?.user?.email === 'hoing11111@gmail.com' && (
                 <Link to="/admin" onClick={() => setIsOpen(false)} className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-3 py-1 text-sm font-bold flex items-center gap-1 transition-all">
                   <Settings size={16} /> Admin
                 </Link>
