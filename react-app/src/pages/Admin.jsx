@@ -52,10 +52,10 @@ export default function Admin() {
       title: month ? 'แก้ไขเดือน' : 'เพิ่มเดือนใหม่',
       html: `
         <div class="flex flex-col gap-3 text-left">
-          <input id="swal-filename" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อไฟล์ (เช่น ani10)" value="${month?.page_filename || ''}">
-          <input type="date" id="swal-m-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full text-gray-600" value="${month?.month_date || ''}">
-          <input id="swal-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อเดือน (Title)" value="${month?.title || ''}">
-          <input id="swal-subtitle" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="คำบรรยายย่อย (Subtitle)" value="${month?.subtitle || ''}">
+          <input id="swal-filename" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อไฟล์ (เช่น ani10)">
+          <input type="date" id="swal-m-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full text-gray-600">
+          <input id="swal-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อเดือน (Title)">
+          <input id="swal-subtitle" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="คำบรรยายย่อย (Subtitle)">
           
           <div class="border border-pink-100 rounded-xl p-4 bg-gray-50/50 mt-2">
             <h4 class="font-bold text-pink-600 mb-3 text-sm">🎨 การปรับแต่งธีม (Theme)</h4>
@@ -132,30 +132,59 @@ export default function Admin() {
       cancelButtonText: 'ยกเลิก',
       customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
       didOpen: () => {
-        const bindSlider = (sliderId, valId, suffix = '') => {
+        // Securely assign values to prevent XSS (String Interpolation Injection)
+        if (month) {
+          document.getElementById('swal-filename').value = month.page_filename || '';
+          document.getElementById('swal-m-date').value = month.month_date || '';
+          document.getElementById('swal-title').value = month.title || '';
+          document.getElementById('swal-subtitle').value = month.subtitle || '';
+          document.getElementById('swal-bg').value = month.bg_image_url || '';
+          document.getElementById('swal-overlay-bg').value = month.bg_overlay_image_url || '';
+        }
+
+        const bindColor = (id, hexId, defaultValue) => {
+          const input = document.getElementById(id);
+          const hex = document.getElementById(hexId);
+          input.value = month ? (month[id.replace('swal-', '').replace('-', '_') + '_color'] || defaultValue) : defaultValue;
+          hex.textContent = input.value;
+          input.addEventListener('input', (e) => hex.textContent = e.target.value);
+        };
+
+        // For specific fields that don't match the generic naming pattern:
+        const mainInput = document.getElementById('swal-main-color');
+        const mainHex = document.getElementById('main-color-hex');
+        mainInput.value = month?.theme_main_text_color || '#003366';
+        mainHex.textContent = mainInput.value;
+        mainInput.addEventListener('input', (e) => mainHex.textContent = e.target.value);
+
+        const subInput = document.getElementById('swal-sub-color');
+        const subHex = document.getElementById('sub-color-hex');
+        subInput.value = month?.theme_sub_text_color || '#005b9f';
+        subHex.textContent = subInput.value;
+        subInput.addEventListener('input', (e) => subHex.textContent = e.target.value);
+
+        const overlayInput = document.getElementById('swal-overlay-color');
+        const overlayHex = document.getElementById('overlay-color-hex');
+        overlayInput.value = month?.bg_overlay_color || '#ffffff';
+        overlayHex.textContent = overlayInput.value;
+        overlayInput.addEventListener('input', (e) => overlayHex.textContent = e.target.value);
+
+        const bindSlider = (sliderId, valId, suffix = '', value) => {
           const slider = document.getElementById(sliderId);
           const valDisplay = document.getElementById(valId);
           if (slider && valDisplay) {
+            slider.value = value;
+            valDisplay.textContent = value + suffix;
             slider.addEventListener('input', (e) => {
               valDisplay.textContent = e.target.value + suffix;
             });
           }
         };
 
-        bindSlider('swal-overlay-opacity', 'opacity-val', '%');
-        bindSlider('swal-img-opacity', 'img-opacity-val', '%');
-        bindSlider('swal-img-blur', 'img-blur-val', 'px');
-        bindSlider('swal-img-brightness', 'img-bright-val', '%');
-        
-        ['main', 'sub', 'overlay'].forEach(type => {
-          const colorInput = document.getElementById(`swal-${type}-color`);
-          const hexDisplay = document.getElementById(`${type}-color-hex`);
-          if (colorInput && hexDisplay) {
-            colorInput.addEventListener('input', (e) => {
-              hexDisplay.textContent = e.target.value;
-            });
-          }
-        });
+        bindSlider('swal-overlay-opacity', 'opacity-val', '%', month?.bg_overlay_opacity !== undefined ? month.bg_overlay_opacity : 40);
+        bindSlider('swal-img-opacity', 'img-opacity-val', '%', month?.bg_overlay_image_opacity ?? 50);
+        bindSlider('swal-img-blur', 'img-blur-val', 'px', month?.bg_overlay_blur ?? 0);
+        bindSlider('swal-img-brightness', 'img-bright-val', '%', month?.bg_overlay_brightness ?? 100);
       },
       preConfirm: async () => {
         const fileInput = document.getElementById('swal-m-file');
@@ -229,19 +258,19 @@ export default function Admin() {
       html: `
         <div class="flex flex-col gap-3 text-left">
           <select id="swal-c-type" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full text-gray-700 bg-white">
-            <option value="image" ${card?.type === 'image' ? 'selected' : ''}>รูปภาพ (Image)</option>
-            <option value="video" ${card?.type === 'video' ? 'selected' : ''}>วิดีโอ (Video)</option>
+            <option value="image">รูปภาพ (Image)</option>
+            <option value="video">วิดีโอ (Video)</option>
           </select>
           <div class="border-2 border-dashed border-pink-300 rounded-xl p-4 bg-pink-50/50 hover:bg-pink-50 transition-colors mt-2">
             <label class="block text-sm font-bold text-pink-600 mb-2 text-center cursor-pointer">เลือกสื่อที่จะอัปโหลด 📸</label>
             <input type="file" id="swal-c-file" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-500 file:text-white hover:file:bg-pink-600 file:cursor-pointer file:transition-colors cursor-pointer"/>
           </div>
-          <input type="hidden" id="swal-c-url" value="${card?.media_url || ''}">
-          <input id="swal-c-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อการ์ด (Title)" value="${card?.title || ''}">
-          <textarea id="swal-c-desc" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full min-h-[100px] resize-none" placeholder="คำบรรยาย">${card?.description || ''}</textarea>
+          <input type="hidden" id="swal-c-url">
+          <input id="swal-c-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อการ์ด (Title)">
+          <textarea id="swal-c-desc" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full min-h-[100px] resize-none" placeholder="คำบรรยาย"></textarea>
           <div class="flex gap-3">
-            <input type="date" id="swal-c-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-1/2 text-gray-600" value="${card?.card_date || ''}">
-            <input id="swal-c-order" type="number" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-1/2" placeholder="ลำดับ (0,1,2...)" value="${card?.order_num !== undefined ? card?.order_num : ''}">
+            <input type="date" id="swal-c-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-1/2 text-gray-600">
+            <input id="swal-c-order" type="number" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-1/2" placeholder="ลำดับ (0,1,2...)">
           </div>
         </div>
       `,
@@ -252,6 +281,16 @@ export default function Admin() {
       confirmButtonText: card ? 'บันทึกการแก้ไข' : 'เพิ่มการ์ด',
       cancelButtonText: 'ยกเลิก',
       customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
+      didOpen: () => {
+        if (card) {
+          document.getElementById('swal-c-type').value = card.type || 'image';
+          document.getElementById('swal-c-url').value = card.media_url || '';
+          document.getElementById('swal-c-title').value = card.title || '';
+          document.getElementById('swal-c-desc').value = card.description || '';
+          document.getElementById('swal-c-date').value = card.card_date || '';
+          document.getElementById('swal-c-order').value = card.order_num !== undefined ? card.order_num : '';
+        }
+      },
       preConfirm: async () => {
         const fileInput = document.getElementById('swal-c-file');
         let mediaUrl = document.getElementById('swal-c-url').value;
