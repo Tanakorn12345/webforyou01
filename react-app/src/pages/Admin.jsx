@@ -350,16 +350,15 @@ export default function Admin() {
 
   if (loading) return <div className="text-center py-24 text-pink-500 font-bold">Loading...</div>;
 
-  if (!session) {
+  if (!session || session.user?.email !== 'bank@gmail.com') {
     return (
       <div className="container mx-auto px-4 py-12 max-w-md flex-grow flex items-center">
-        <div className="bg-white p-8 rounded-2xl shadow-lg border border-pink-100 w-full">
-          <h2 className="text-2xl font-bold text-center text-pink-500 mb-6">Admin Login</h2>
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
-            <input type="email" name="email" placeholder="Email" className="border px-4 py-3 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition-all" required />
-            <input type="password" name="password" placeholder="Password" className="border px-4 py-3 rounded-xl focus:ring-2 focus:ring-pink-400 outline-none transition-all" required />
-            <button type="submit" className="bg-pink-500 text-white font-bold py-3 rounded-xl hover:bg-pink-600 transition-colors shadow-md mt-2">Login</button>
-          </form>
+        <div className="bg-white p-8 rounded-3xl shadow-lg border border-red-100 w-full text-center">
+          <h2 className="text-3xl font-bold text-red-500 mb-4">⛔ Access Denied</h2>
+          <p className="text-gray-600 mb-6">คุณไม่มีสิทธิ์เข้าถึงหน้านี้<br/>(เฉพาะผู้ดูแลระบบ bank@gmail.com เท่านั้น)</p>
+          <a href="/" className="inline-block bg-pink-500 text-white px-6 py-2 rounded-full hover:bg-pink-600 transition-colors font-bold shadow-sm">
+            กลับหน้าแรก
+          </a>
         </div>
       </div>
     );

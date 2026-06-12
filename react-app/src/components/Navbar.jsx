@@ -39,9 +39,11 @@ export default function Navbar({ session }) {
               </div>
             )}
             
-            <Link to="/admin" className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-4 py-2 font-bold flex items-center gap-2 transition-all shadow-sm">
-              <Settings size={18} /> Admin
-            </Link>
+            {session?.user?.email === 'bank@gmail.com' && (
+              <Link to="/admin" className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-4 py-2 font-bold flex items-center gap-2 transition-all shadow-sm">
+                <Settings size={18} /> Admin
+              </Link>
+            )}
 
             <button 
               onClick={() => supabase.auth.signOut()}
@@ -83,9 +85,11 @@ export default function Navbar({ session }) {
                   </span>
                 </div>
               )}
-              <Link to="/admin" onClick={() => setIsOpen(false)} className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-3 py-1 text-sm font-bold flex items-center gap-1 transition-all">
-                <Settings size={16} /> Admin
-              </Link>
+              {session?.user?.email === 'bank@gmail.com' && (
+                <Link to="/admin" onClick={() => setIsOpen(false)} className="border-2 border-yellow-300 text-yellow-300 hover:bg-yellow-300 hover:text-pink-500 rounded-full px-3 py-1 text-sm font-bold flex items-center gap-1 transition-all">
+                  <Settings size={16} /> Admin
+                </Link>
+              )}
             </div>
             <button 
               onClick={() => { setIsOpen(false); supabase.auth.signOut(); }}
