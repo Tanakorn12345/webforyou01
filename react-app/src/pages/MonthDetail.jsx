@@ -115,5 +115,6 @@ export default function MonthDetail() {
         </div>
       </div>
     </div>
+  </div>
   );
 }
