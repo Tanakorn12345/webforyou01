@@ -1,5 +1,5 @@
 import { supabase } from '../lib/supabase';
-import { LockKeyhole } from 'lucide-react';
+import { BookHeart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 export default function Login() {
