@@ -524,10 +524,11 @@ export default function Admin() {
         <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold text-gray-800">การตั้งค่าเว็บไซต์ (Site Settings)</h2>
-            <button onClick={() => showSettingsForm()} className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5">
+            <button onClick={() => showSettingsForm()} className="flex items-center gap-2 bg-gradient-to-r r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5">
               <Edit size={18} /> จัดการหน้า Login
             </button>
           </div>
+          
           
           <div className="flex flex-col md:flex-row gap-6 bg-gray-50 p-6 rounded-2xl border border-gray-100">
             <div className="w-full md:w-1/3 aspect-video bg-gray-200 rounded-xl overflow-hidden relative shadow-inner">
