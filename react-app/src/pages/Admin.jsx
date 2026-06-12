@@ -94,7 +94,7 @@ export default function Admin() {
       cancelButtonText: 'ยกเลิก',
       confirmButtonColor: '#ec4899',
       cancelButtonColor: '#d1d5db',
-      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl w-[500px]' },
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
       didOpen: () => {
         const blurInput = document.getElementById('swal-s-blur');
         const overlayInput = document.getElementById('swal-s-overlay');
@@ -267,7 +267,7 @@ export default function Admin() {
       cancelButtonColor: '#d1d5db',
       confirmButtonText: month ? 'บันทึกการแก้ไข' : 'เพิ่มเดือน',
       cancelButtonText: 'ยกเลิก',
-      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
       didOpen: () => {
         // Securely assign values to prevent XSS (String Interpolation Injection)
         if (month) {
@@ -417,7 +417,7 @@ export default function Admin() {
       cancelButtonColor: '#d1d5db',
       confirmButtonText: card ? 'บันทึกการแก้ไข' : 'เพิ่มการ์ด',
       cancelButtonText: 'ยกเลิก',
-      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl' },
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
       didOpen: () => {
         if (card) {
           document.getElementById('swal-c-type').value = card.type || 'image';
@@ -514,7 +514,7 @@ export default function Admin() {
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
               <span className="truncate max-w-[150px] md:max-w-none">{session?.user?.email || 'Admin User'}</span>
             </div>
-            <button onClick={handleLogout} className="flex items-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-pink-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
+            <button onClick={handleLogout} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-pink-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
               <LogOut size={18} /> ออกจากระบบ
             </button>
           </div>
@@ -522,9 +522,9 @@ export default function Admin() {
 
       {!activeMonth && (
         <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
-          <div className="flex justify-between items-center mb-6">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
             <h2 className="text-2xl font-bold text-gray-800">การตั้งค่าเว็บไซต์ (Site Settings)</h2>
-            <button onClick={() => showSettingsForm()} className="flex items-center gap-2 bg-gradient-to-r r from-red-400 to-pink-500 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5">
+            <button onClick={() => showSettingsForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5">
               <Edit size={18} /> จัดการหน้า Login
             </button>
           </div>
@@ -555,9 +555,9 @@ export default function Admin() {
 
       {!activeMonth ? (
         <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">การจัดการเดือน (Months management)</h2>
-            <button onClick={() => showMonthForm()} className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+            <h2 className="text-2xl font-bold text-gray-800">รายการเดือน (Months)</h2>
+            <button onClick={() => showMonthForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
               <Plus size={18} /> เพิ่มเดือนใหม่
             </button>
           </div>
@@ -585,9 +585,9 @@ export default function Admin() {
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-pink-100 pb-6 gap-4">
             <div className="flex items-center gap-4">
               <button onClick={() => setActiveMonth(null)} className="p-3 text-pink-500 bg-pink-50 hover:bg-pink-100 hover:text-pink-600 rounded-full transition-all hover:scale-105"><ArrowLeft size={24} /></button>
-              <h2 className="text-2xl font-bold text-gray-800">การ์ดในเดือน: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-400">{activeMonth.title}</span></h2>
+              <h2 className="text-xl md:text-2xl font-bold text-gray-800">การ์ดในเดือน: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-400">{activeMonth.title}</span></h2>
             </div>
-            <button onClick={() => showCardForm()} className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
+            <button onClick={() => showCardForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
               <Plus size={18} /> เพิ่มการ์ดใหม่
             </button>
           </div>
