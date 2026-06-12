@@ -571,7 +571,7 @@ export default function Admin() {
                   <h3 className="font-bold text-xl text-pink-600 mb-1">{m.title}</h3>
                   <p className="text-sm text-gray-500 font-mono bg-gray-200 px-2 py-0.5 rounded-md inline-block">{m.page_filename}</p>
                 </div>
-                <div className="flex gap-2 w-full md:w-auto justify-end">
+                <div className="mt-6 flex justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                   <button onClick={() => showMonthForm(m)} className="p-2.5 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition-colors"><Edit size={20} /></button>
                   <button onClick={() => deleteMonth(m.id)} className="p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"><Trash2 size={20} /></button>
                 </div>
@@ -594,8 +594,8 @@ export default function Admin() {
           
           <div className="grid gap-6 md:grid-cols-2">
             {cards.map(c => (
-              <div key={c.id} className="flex gap-5 p-5 border border-pink-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-lg transition-all group">
-                <div className="w-28 h-28 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0 relative">
+              <div key={c.id} className="flex flex-col sm:flex-row gap-5 p-5 border border-pink-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-lg transition-all group">
+                <div className="w-full sm:w-28 h-48 sm:h-28 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0 relative">
                   {c.type === 'video' ? (
                     <video src={c.media_url} className="w-full h-full object-cover" />
                   ) : (
@@ -610,7 +610,7 @@ export default function Admin() {
                   </div>
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-xs font-bold bg-pink-100 text-pink-600 px-2.5 py-1 rounded-lg">ลำดับ: {c.order_num}</span>
-                    <div className="flex gap-2">
+                    <div className="mt-4 sm:mt-auto flex justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => showCardForm(c)} className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
                       <button onClick={() => deleteCard(c.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
                     </div>
