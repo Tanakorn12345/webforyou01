@@ -155,42 +155,30 @@ export default function Countdown() {
             ระยะเวลาที่เราอยู่ด้วยกัน 💖
           </h2>
 
-          <div className="grid grid-cols-3 md:grid-cols-6 gap-3 md:gap-4">
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.years}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">ปี</span>
+          <div className="flex justify-center flex-wrap gap-4 md:gap-8 max-w-2xl mx-auto">
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.years}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">ปี</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.months}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">เดือน</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.months}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">เดือน</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.days}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">วัน</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.days}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">วัน</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.hours.toString().padStart(2, '0')}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">ชั่วโมง</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.hours.toString().padStart(2, '0')}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">ชม.</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.minutes.toString().padStart(2, '0')}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">นาที</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.minutes.toString().padStart(2, '0')}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">นาที</span>
             </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-white/30 backdrop-blur-sm rounded-2xl w-full aspect-square flex items-center justify-center shadow-inner border border-white/20 mb-2">
-                <span className="text-3xl md:text-4xl font-bold text-white drop-shadow">{elapsedTime.seconds.toString().padStart(2, '0')}</span>
-              </div>
-              <span className="text-white text-xs md:text-sm font-medium drop-shadow">วินาที</span>
+            <div className="flex items-baseline gap-1">
+              <span className="text-2xl md:text-3xl font-bold text-white drop-shadow-md">{elapsedTime.seconds.toString().padStart(2, '0')}</span>
+              <span className="text-white/80 text-sm md:text-base font-medium">วิ</span>
             </div>
           </div>
 
