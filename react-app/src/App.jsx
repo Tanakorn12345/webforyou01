@@ -9,6 +9,7 @@ import Collection from './pages/Collection';
 import MonthDetail from './pages/MonthDetail';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import Countdown from './pages/Countdown';
 
 function App() {
   const [session, setSession] = useState(null);
@@ -48,6 +49,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/mycollection" element={<Collection />} />
+            <Route path="/countdown" element={<Countdown />} />
             <Route path="/month/:filename" element={<MonthDetail />} />
             <Route path="/admin" element={<Admin />} />
           </Routes>

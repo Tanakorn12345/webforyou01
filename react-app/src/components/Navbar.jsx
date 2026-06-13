@@ -23,6 +23,7 @@ export default function Navbar({ session }) {
           <Link to="/" className={linkClass('/')}>Content</Link>
           <Link to="/contact" className={linkClass('/contact')}>Contact</Link>
           <Link to="/mycollection" className={linkClass('/mycollection')}>Myaniversary</Link>
+          <Link to="/countdown" className={linkClass('/countdown')}>Countdown</Link>
           
           <div className="flex items-center gap-4 border-l border-pink-300 pl-4 ml-2">
             {session?.user?.user_metadata && (
@@ -67,6 +68,7 @@ export default function Navbar({ session }) {
           <Link to="/" onClick={() => setIsOpen(false)} className={linkClass('/')}>Content</Link>
           <Link to="/contact" onClick={() => setIsOpen(false)} className={linkClass('/contact')}>Contact</Link>
           <Link to="/mycollection" onClick={() => setIsOpen(false)} className={linkClass('/mycollection')}>Myaniversary</Link>
+          <Link to="/countdown" onClick={() => setIsOpen(false)} className={linkClass('/countdown')}>Countdown</Link>
           
           <hr className="border-pink-400 my-2" />
           
