@@ -196,6 +196,10 @@ export default function Admin() {
             <label class="block text-sm font-bold text-gray-700 mb-1">ความเบลอ (Blur): <span id="swal-cd-blur-val" class="text-pink-500">${siteSettings?.countdown_bg_blur || 0}px</span></label>
             <input type="range" id="swal-cd-blur" min="0" max="20" value="${siteSettings?.countdown_bg_blur || 0}" class="w-full accent-pink-500">
           </div>
+          <div class="mb-4 mt-2">
+            <label class="block text-sm font-bold text-gray-700 mb-1">วันที่เริ่มต้นคบกัน (Anniversary Date):</label>
+            <input type="date" id="swal-cd-anniversary" value="${siteSettings?.anniversary_date || '2023-01-26'}" class="w-full px-3 py-2 border border-pink-200 rounded-lg focus:ring-2 focus:ring-pink-500 outline-none text-gray-700 bg-white">
+          </div>
 
           <div>
             <label class="block text-sm font-bold text-gray-700 mb-1">ความมืด/สว่าง (Overlay): <span id="swal-cd-overlay-val" class="text-pink-500">${siteSettings?.countdown_bg_overlay_opacity ?? 50}%</span></label>
@@ -264,6 +268,7 @@ export default function Admin() {
         const blur = parseInt(document.getElementById('swal-cd-blur').value);
         const overlay = parseInt(document.getElementById('swal-cd-overlay').value);
         const removeFlag = document.getElementById('swal-cd-remove-flag').value === 'true';
+        const anniversaryDate = document.getElementById('swal-cd-anniversary').value;
 
         let mediaUrl = siteSettings?.countdown_bg_url;
 
@@ -285,7 +290,8 @@ export default function Admin() {
         return {
           countdown_bg_url: mediaUrl,
           countdown_bg_blur: blur,
-          countdown_bg_overlay_opacity: overlay
+          countdown_bg_overlay_opacity: overlay,
+          anniversary_date: anniversaryDate
         };
       }
     }).then(async (result) => {
