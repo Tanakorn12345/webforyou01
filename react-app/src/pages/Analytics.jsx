@@ -52,13 +52,13 @@ export default function Analytics() {
       if (newData[ip]) continue;
       
       try {
-        const res = await fetch(`https://ipapi.co/${ip}/json/`);
+        const res = await fetch(`https://ipwho.is/${ip}`);
         const json = await res.json();
         
-        if (!json.error) {
+        if (json.success) {
           newData[ip] = {
-            location: [json.city, json.region, json.country_name].filter(Boolean).join(', '),
-            isp: json.org || json.isp || 'Unknown'
+            location: [json.city, json.region, json.country].filter(Boolean).join(', '),
+            isp: json.connection?.isp || json.connection?.org || 'Unknown'
           };
         } else {
           newData[ip] = { location: 'Unknown', isp: 'Unknown' };
