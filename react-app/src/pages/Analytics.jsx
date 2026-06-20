@@ -52,13 +52,13 @@ export default function Analytics() {
       if (newData[ip]) continue;
       
       try {
-        const res = await fetch(`https://ipwho.is/${ip}`);
+        const res = await fetch(`https://get.geojs.io/v1/ip/geo/${ip}.json`);
         const json = await res.json();
         
-        if (json.success) {
+        if (json && !json.error) {
           newData[ip] = {
             location: [json.city, json.region, json.country].filter(Boolean).join(', '),
-            isp: json.connection?.isp || json.connection?.org || 'Unknown'
+            isp: json.organization_name || json.organization || 'Unknown'
           };
         } else {
           newData[ip] = { location: 'Unknown', isp: 'Unknown' };
