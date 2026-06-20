@@ -8,12 +8,17 @@ import Contact from './pages/Contact';
 import Collection from './pages/Collection';
 import MonthDetail from './pages/MonthDetail';
 import Admin from './pages/Admin';
+import Analytics from './pages/Analytics';
 import Login from './pages/Login';
 import Countdown from './pages/Countdown';
+import { useVisitorTracking } from './hooks/useVisitorTracking';
 
 function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // เริ่มระบบเก็บสถิติคนเข้าเว็บ
+  useVisitorTracking();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -52,6 +57,7 @@ function App() {
             <Route path="/countdown" element={<Countdown />} />
             <Route path="/month/:filename" element={<MonthDetail />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/analytics" element={<Analytics />} />
           </Routes>
         </main>
         <Footer />
