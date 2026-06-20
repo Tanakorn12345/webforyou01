@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Swal from 'sweetalert2';
-import { LogOut, Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
+import { LogOut, Plus, Edit, Trash2, ArrowLeft, BarChart2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export default function Admin() {
   const [session, setSession] = useState(null);
@@ -625,10 +626,13 @@ export default function Admin() {
             <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-red-500 pl-4">Admin Dashboard</h1>
           </div>
           <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div className="flex items-center gap-2 text-pink-600 bg-pink-50 px-4 py-2 rounded-full font-medium text-sm border border-pink-100">
+            <div className="flex items-center gap-2 text-pink-600 bg-pink-50 px-4 py-2 rounded-full font-medium text-sm border border-pink-100 hidden sm:flex">
               <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
               <span className="truncate max-w-[150px] md:max-w-none">{session?.user?.email || 'Admin User'}</span>
             </div>
+            <Link to="/admin/analytics" className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
+              <BarChart2 size={18} /> สถิติ
+            </Link>
             <button onClick={handleLogout} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-pink-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
               <LogOut size={18} /> ออกจากระบบ
             </button>
