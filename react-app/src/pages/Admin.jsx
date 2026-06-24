@@ -703,7 +703,7 @@ export default function Admin() {
                   <h3 className="font-bold text-xl text-pink-600 mb-1">{m.title}</h3>
                   <p className="text-sm text-gray-500 font-mono bg-gray-200 px-2 py-0.5 rounded-md inline-block">{m.page_filename}</p>
                 </div>
-                <div className="mt-6 flex justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                <div className="mt-6 flex justify-end gap-2 opacity-100 transition-opacity">
                   <button onClick={() => showMonthForm(m)} className="p-2.5 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition-colors"><Edit size={20} /></button>
                   <button onClick={() => deleteMonth(m.id)} className="p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"><Trash2 size={20} /></button>
                 </div>
@@ -742,7 +742,7 @@ export default function Admin() {
                   </div>
                   <div className="flex justify-between items-center mt-3">
                     <span className="text-xs font-bold bg-pink-100 text-pink-600 px-2.5 py-1 rounded-lg">ลำดับ: {c.order_num}</span>
-                    <div className="mt-4 sm:mt-auto flex justify-end gap-2 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                    <div className="mt-4 sm:mt-auto flex justify-end gap-2 opacity-100 transition-opacity">
                       <button onClick={() => showCardForm(c)} className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
                       <button onClick={() => deleteCard(c.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
                     </div>
