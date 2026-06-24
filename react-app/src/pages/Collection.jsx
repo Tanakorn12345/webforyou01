@@ -57,9 +57,20 @@ export default function Collection() {
                           {new Date(month.month_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' })}
                         </p>
                         {(() => {
-                          const diffTime = Math.abs(new Date() - new Date(month.month_date));
-                          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                          return <p className="text-[10px] text-pink-400 font-medium mt-0.5">({diffDays} วันที่ผ่านมาแล้ว)</p>;
+                          const today = new Date();
+                          today.setHours(0, 0, 0, 0);
+                          const mDate = new Date(month.month_date);
+                          mDate.setHours(0, 0, 0, 0);
+                          const diffTime = today.getTime() - mDate.getTime();
+                          const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                          
+                          if (diffDays < 0) {
+                            return <p className="text-[10px] text-pink-400 font-medium mt-0.5">(อีก {Math.abs(diffDays)} วันจะถึง)</p>;
+                          } else if (diffDays === 0) {
+                            return <p className="text-[10px] text-pink-400 font-medium mt-0.5">(วันนี้! 🎉)</p>;
+                          } else {
+                            return <p className="text-[10px] text-pink-400 font-medium mt-0.5">({diffDays} วันที่ผ่านมาแล้ว)</p>;
+                          }
                         })()}
                       </div>
                     )}
