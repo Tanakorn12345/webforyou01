@@ -1,16 +1,10 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { supabase } from './lib/supabase';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Home from './pages/Home';
-import Contact from './pages/Contact';
-import Collection from './pages/Collection';
-import MonthDetail from './pages/MonthDetail';
-import Admin from './pages/Admin';
-import Analytics from './pages/Analytics';
 import Login from './pages/Login';
-import Countdown from './pages/Countdown';
+import AnimatedRoutes from './components/AnimatedRoutes';
 import { useVisitorTracking } from './hooks/useVisitorTracking';
 
 function App() {
@@ -50,15 +44,7 @@ function App() {
       <div className="min-h-screen flex flex-col font-prompt">
         <Navbar session={session} />
         <main className="flex-grow">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/mycollection" element={<Collection />} />
-            <Route path="/countdown" element={<Countdown />} />
-            <Route path="/month/:filename" element={<MonthDetail />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/analytics" element={<Analytics />} />
-          </Routes>
+          <AnimatedRoutes />
         </main>
         <Footer />
       </div>

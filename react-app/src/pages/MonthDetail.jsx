@@ -2,6 +2,22 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import MediaCard from '../components/MediaCard';
+import { motion } from 'framer-motion';
+
+const container = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1
+    }
+  }
+};
+
+const item = {
+  hidden: { opacity: 0, y: 20 },
+  show: { opacity: 1, y: 0 }
+};
 
 export default function MonthDetail() {
   const { filename } = useParams();
@@ -98,23 +114,30 @@ export default function MonthDetail() {
           </div>
         )}
 
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto px-4 relative z-10 max-w-6xl">
           {monthData.subtitle && (
           <p className="text-center text-lg mb-8" style={{ color: textSubColor }}>
             {monthData.subtitle}
           </p>
-        )}
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {cards.map(card => (
-            <MediaCard key={card.id} card={card} />
-          ))}
-          {cards.length === 0 && (
+          )}
+          {cards.length > 0 ? (
+            <motion.div 
+              variants={container}
+              initial="hidden"
+              animate="show"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 lg:gap-8 justify-items-center"
+            >
+              {cards.map(card => (
+                <motion.div variants={item} key={card.id} className="w-full">
+                  <MediaCard card={card} />
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
             <div className="col-span-full text-center py-8 text-gray-500">ยังไม่มีการ์ดในเดือนนี้</div>
           )}
         </div>
       </div>
     </div>
-  </div>
   );
 }

@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   body {
-    @apply font-prompt bg-white text-gray-800 min-h-screen flex flex-col;
+    @apply font-prompt bg-white text-gray-800 min-h-screen flex flex-col overflow-x-hidden;
+  }
+  button, a {
+    @apply transition-transform active:scale-[0.97];
   }
 }
 
