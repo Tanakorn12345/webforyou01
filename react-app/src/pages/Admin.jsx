@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Swal from 'sweetalert2';
-import { LogOut, Plus, Edit, Trash2, ArrowLeft, BarChart2 } from 'lucide-react';
+import { LogOut, Plus, Edit, Trash2, ArrowLeft, BarChart2, Calendar, Settings, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Admin() {
@@ -11,6 +11,7 @@ export default function Admin() {
   const [cards, setCards] = useState([]);
   const [activeMonth, setActiveMonth] = useState(null);
   const [siteSettings, setSiteSettings] = useState(null);
+  const [activeTab, setActiveTab] = useState('months');
 
   const fetchSiteSettings = async () => {
     const { data } = await supabase.from('site_settings').select('*').eq('id', 1).single();
@@ -673,142 +674,206 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-pink-100 py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 bg-white/80 backdrop-blur-md p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 relative overflow-hidden gap-4">
-          <div className="flex items-center">
-            <div className="absolute top-0 left-0 w-2 h-full bg-gradient-to-b from-pink-400 to-red-400"></div>
-            <h1 className="text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-red-500 pl-4">Admin Dashboard</h1>
+    <div className="min-h-screen bg-pink-50/50 flex flex-col md:flex-row font-prompt overflow-hidden">
+      {/* Sidebar */}
+      <div className="w-full md:w-72 bg-white shadow-xl md:min-h-screen flex flex-col z-20 border-r border-pink-100/60 shrink-0">
+        <div className="p-6 md:p-8 flex flex-col items-center border-b border-pink-50 bg-gradient-to-b from-pink-50/50 to-white">
+          <div className="w-16 h-16 bg-gradient-to-tr from-pink-400 to-red-400 rounded-2xl flex items-center justify-center mb-4 shadow-[0_8px_16px_-6px_rgba(236,72,153,0.5)] transform rotate-3 hover:rotate-6 transition-transform">
+             <Heart className="text-white w-8 h-8" fill="currentColor" />
           </div>
-          <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-            <div className="flex items-center gap-2 text-pink-600 bg-pink-50 px-4 py-2 rounded-full font-medium text-sm border border-pink-100 hidden sm:flex">
-              <span className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
-              <span className="truncate max-w-[150px] md:max-w-none">{session?.user?.email || 'Admin User'}</span>
-            </div>
-            <Link to="/admin/analytics" className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-600 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-blue-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
-              <BarChart2 size={18} /> สถิติ
-            </Link>
-            <button onClick={handleLogout} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-red-400 to-pink-500 text-white font-bold px-6 py-2.5 rounded-full hover:shadow-lg hover:shadow-pink-200 hover:-translate-y-0.5 transition-all duration-300 whitespace-nowrap">
-              <LogOut size={18} /> ออกจากระบบ
-            </button>
-          </div>
+          <h1 className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-red-500 tracking-tight text-center">webpageforpimmie</h1>
+          <p className="text-xs text-gray-400 mt-1 font-bold uppercase tracking-widest">Admin Panel</p>
+        </div>
+        
+        <div className="flex-grow p-4 md:p-6 flex flex-col gap-2 overflow-y-auto">
+          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 ml-2">เมนูหลัก</p>
+          <button 
+            onClick={() => { setActiveTab('months'); setActiveMonth(null); }}
+            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${activeTab === 'months' ? 'bg-gradient-to-r from-pink-500 to-red-400 text-white shadow-lg shadow-pink-200 translate-x-1' : 'text-gray-500 hover:bg-pink-50 hover:text-pink-600'}`}
+          >
+            <Calendar size={20} className={activeTab === 'months' ? 'text-white' : 'text-pink-400'} /> 
+            จัดการเดือน
+          </button>
+          <button 
+            onClick={() => { setActiveTab('settings'); setActiveMonth(null); }}
+            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${activeTab === 'settings' ? 'bg-gradient-to-r from-pink-500 to-red-400 text-white shadow-lg shadow-pink-200 translate-x-1' : 'text-gray-500 hover:bg-pink-50 hover:text-pink-600'}`}
+          >
+            <Settings size={20} className={activeTab === 'settings' ? 'text-white' : 'text-pink-400'} /> 
+            ตั้งค่าเว็บไซต์
+          </button>
+          <Link 
+            to="/admin/analytics" 
+            className="flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold text-gray-500 hover:bg-blue-50 hover:text-blue-600 transition-all duration-300 mt-2"
+          >
+            <BarChart2 size={20} className="text-blue-400" /> 
+            ดูสถิติเข้าชม
+          </Link>
         </div>
 
-      {!activeMonth && (
-        <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">การตั้งค่าเว็บไซต์ (Site Settings)</h2>
-            <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
-              <button onClick={() => showSettingsForm()} className="w-full sm:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-5 py-2.5 rounded-full hover:shadow-lg hover:shadow-purple-200 font-bold transition-all hover:-translate-y-0.5 text-sm">
-                <Edit size={16} /> หน้า Login
-              </button>
-              <button onClick={() => showCountdownSettingsForm()} className="w-full sm:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-5 py-2.5 rounded-full hover:shadow-lg hover:shadow-blue-200 font-bold transition-all hover:-translate-y-0.5 text-sm">
-                <Edit size={16} /> หน้า Countdown
-              </button>
-            </div>
+        <div className="p-4 md:p-6 border-t border-pink-50 bg-gray-50/50 mt-auto">
+          <div className="flex items-center gap-3 mb-4 px-2 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+             <div className="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 font-bold uppercase text-xs shrink-0">
+               {session?.user?.email?.[0] || 'A'}
+             </div>
+             <div className="flex flex-col min-w-0">
+               <span className="text-xs font-bold text-gray-700 truncate">{session?.user?.email}</span>
+               <span className="text-[10px] text-green-500 font-medium flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500"></span> Online</span>
+             </div>
           </div>
+          <button onClick={handleLogout} className="w-full flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-red-50 hover:border-red-100 text-gray-600 hover:text-red-600 font-bold px-4 py-3 rounded-xl transition-all shadow-sm">
+            <LogOut size={18} /> ออกจากระบบ
+          </button>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div className="flex-1 overflow-y-auto h-screen custom-scrollbar relative bg-gray-50/30">
+        <div className="p-4 md:p-8 lg:p-10 max-w-6xl mx-auto">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="flex flex-col bg-gray-50 p-6 rounded-2xl border border-gray-100">
-               <h3 className="text-lg font-bold text-gray-700 mb-4 text-center">Login Page</h3>
-               <div className="w-full aspect-video bg-gray-200 rounded-xl overflow-hidden relative shadow-inner">
-                  {siteSettings?.login_bg_url ? (
-                    <>
-                      <img src={siteSettings.login_bg_url} className="w-full h-full object-cover" style={{ filter: `blur(${siteSettings.login_bg_blur || 0}px)`, transform: 'scale(1.1)' }} />
-                      <div className="absolute inset-0 bg-black" style={{ opacity: (siteSettings.login_bg_overlay_opacity ?? 50) / 100 }}></div>
-                    </>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
-                  )}
-               </div>
-            </div>
-
-            <div className="flex flex-col bg-gray-50 p-6 rounded-2xl border border-gray-100">
-               <h3 className="text-lg font-bold text-gray-700 mb-4 text-center">Countdown Page</h3>
-               <div className="w-full aspect-video bg-gray-200 rounded-xl overflow-hidden relative shadow-inner">
-                 {siteSettings?.countdown_bg_url ? (
-                   <>
-                     <img src={siteSettings.countdown_bg_url} className="w-full h-full object-cover" style={{ filter: `blur(${siteSettings.countdown_bg_blur || 0}px)`, transform: 'scale(1.1)' }} />
-                     <div className="absolute inset-0 bg-black" style={{ opacity: (siteSettings.countdown_bg_overlay_opacity ?? 50) / 100 }}></div>
-                   </>
-                 ) : (
-                   <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
-                 )}
-               </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {!activeMonth ? (
-        <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-            <h2 className="text-2xl font-bold text-gray-800">รายการเดือน (Months)</h2>
-            <button onClick={() => showMonthForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
-              <Plus size={18} /> เพิ่มเดือนใหม่
-            </button>
-          </div>
-          <div className="grid gap-4">
-            {months.map(m => (
-              <div key={m.id} className="flex flex-col md:flex-row items-start md:items-center justify-between p-5 border border-pink-50 rounded-2xl hover:shadow-md transition-all bg-gray-50 hover:bg-white group">
-                <div 
-                  className="cursor-pointer flex-grow w-full md:w-auto mb-4 md:mb-0"
-                  onClick={() => { setActiveMonth(m); fetchCards(m.id); }}
-                >
-                  <h3 className="font-bold text-xl text-pink-600 mb-1">{m.title}</h3>
-                  <p className="text-sm text-gray-500 font-mono bg-gray-200 px-2 py-0.5 rounded-md inline-block">{m.page_filename}</p>
-                </div>
-                <div className="mt-6 flex justify-end gap-2 opacity-100 transition-opacity">
-                  <button onClick={() => showMonthForm(m)} className="p-2.5 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition-colors"><Edit size={20} /></button>
-                  <button onClick={() => deleteMonth(m.id)} className="p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"><Trash2 size={20} /></button>
-                </div>
-              </div>
-            ))}
-            {months.length === 0 && <p className="text-center text-gray-500 py-8">ยังไม่มีข้อมูล</p>}
-          </div>
-        </div>
-      ) : (
-        <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-pink-100 pb-6 gap-4">
-            <div className="flex items-center gap-4">
-              <button onClick={() => setActiveMonth(null)} className="p-3 text-pink-500 bg-pink-50 hover:bg-pink-100 hover:text-pink-600 rounded-full transition-all hover:scale-105"><ArrowLeft size={24} /></button>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">การ์ดในเดือน: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-400">{activeMonth.title}</span></h2>
-            </div>
-            <button onClick={() => showCardForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
-              <Plus size={18} /> เพิ่มการ์ดใหม่
-            </button>
-          </div>
-          
-          <div className="grid gap-6 md:grid-cols-2">
-            {cards.map(c => (
-              <div key={c.id} className="flex flex-col sm:flex-row gap-5 p-5 border border-pink-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-lg transition-all group">
-                <div className="w-full sm:w-28 h-48 sm:h-28 bg-gray-200 rounded-xl overflow-hidden flex-shrink-0 relative">
-                  {c.type === 'video' ? (
-                    <video src={c.media_url} className="w-full h-full object-cover" />
-                  ) : (
-                    <img src={c.media_url} className="w-full h-full object-cover" />
-                  )}
-                  <div className="absolute top-1 left-1 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded font-bold uppercase">{c.type}</div>
-                </div>
-                <div className="flex-grow flex flex-col justify-between">
+          {activeTab === 'settings' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                   <div>
-                    <h4 className="font-bold text-gray-800 text-lg leading-tight mb-1">{c.title}</h4>
-                    <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{c.description}</p>
+                    <h2 className="text-2xl font-bold text-gray-800">การตั้งค่าเว็บไซต์</h2>
+                    <p className="text-sm text-gray-500 mt-1">จัดการพื้นหลังหน้า Login และ Countdown</p>
                   </div>
-                  <div className="flex justify-between items-center mt-3">
-                    <span className="text-xs font-bold bg-pink-100 text-pink-600 px-2.5 py-1 rounded-lg">ลำดับ: {c.order_num}</span>
-                    <div className="mt-4 sm:mt-auto flex justify-end gap-2 opacity-100 transition-opacity">
-                      <button onClick={() => showCardForm(c)} className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
-                      <button onClick={() => deleteCard(c.id)} className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                  <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                    <button onClick={() => showSettingsForm()} className="w-full sm:w-auto justify-center flex items-center gap-2 bg-white border-2 border-purple-100 text-purple-600 hover:bg-purple-50 px-5 py-2.5 rounded-full font-bold transition-all hover:-translate-y-0.5 text-sm shadow-sm">
+                      <Edit size={16} /> หน้า Login
+                    </button>
+                    <button onClick={() => showCountdownSettingsForm()} className="w-full sm:w-auto justify-center flex items-center gap-2 bg-white border-2 border-blue-100 text-blue-600 hover:bg-blue-50 px-5 py-2.5 rounded-full font-bold transition-all hover:-translate-y-0.5 text-sm shadow-sm">
+                      <Edit size={16} /> หน้า Countdown
+                    </button>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex flex-col bg-gray-50 p-6 rounded-[1.5rem] border border-gray-100 group">
+                    <h3 className="text-lg font-bold text-gray-700 mb-4 text-center">Login Page</h3>
+                    <div className="w-full aspect-video bg-gray-200 rounded-2xl overflow-hidden relative shadow-inner group-hover:shadow-md transition-shadow">
+                        {siteSettings?.login_bg_url ? (
+                          <>
+                            <img src={siteSettings.login_bg_url} className="w-full h-full object-cover" style={{ filter: `blur(${siteSettings.login_bg_blur || 0}px)`, transform: 'scale(1.1)' }} />
+                            <div className="absolute inset-0 bg-black" style={{ opacity: (siteSettings.login_bg_overlay_opacity ?? 50) / 100 }}></div>
+                          </>
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
+                        )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col bg-gray-50 p-6 rounded-[1.5rem] border border-gray-100 group">
+                    <h3 className="text-lg font-bold text-gray-700 mb-4 text-center">Countdown Page</h3>
+                    <div className="w-full aspect-video bg-gray-200 rounded-2xl overflow-hidden relative shadow-inner group-hover:shadow-md transition-shadow">
+                      {siteSettings?.countdown_bg_url ? (
+                        <>
+                          <img src={siteSettings.countdown_bg_url} className="w-full h-full object-cover" style={{ filter: `blur(${siteSettings.countdown_bg_blur || 0}px)`, transform: 'scale(1.1)' }} />
+                          <div className="absolute inset-0 bg-black" style={{ opacity: (siteSettings.countdown_bg_overlay_opacity ?? 50) / 100 }}></div>
+                        </>
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-gray-400 font-medium text-sm">ไม่มีรูปภาพพื้นหลัง</div>
+                      )}
                     </div>
                   </div>
                 </div>
               </div>
-            ))}
-            {cards.length === 0 && <p className="text-center text-gray-500 py-8 col-span-full">ยังไม่มีการ์ด</p>}
-          </div>
+            </div>
+          )}
+
+          {activeTab === 'months' && !activeMonth && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">จัดการเดือน (Months)</h2>
+                    <p className="text-sm text-gray-500 mt-1">เพิ่ม ลบ หรือแก้ไขข้อมูลของแต่ละเดือน</p>
+                  </div>
+                  <button onClick={() => showMonthForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
+                    <Plus size={18} /> เพิ่มเดือนใหม่
+                  </button>
+                </div>
+                <div className="grid gap-4">
+                  {months.map(m => (
+                    <div key={m.id} className="flex flex-col md:flex-row items-start md:items-center justify-between p-5 border border-pink-50 rounded-2xl hover:shadow-md transition-all bg-gray-50 hover:bg-white group cursor-pointer" onClick={(e) => {
+                      if(!e.target.closest('button')) {
+                        setActiveMonth(m); fetchCards(m.id);
+                      }
+                    }}>
+                      <div className="flex-grow w-full md:w-auto mb-4 md:mb-0 flex items-center gap-4">
+                        <div className="w-12 h-12 rounded-xl bg-pink-100 flex items-center justify-center shrink-0">
+                          <Calendar className="text-pink-500 w-6 h-6" />
+                        </div>
+                        <div>
+                          <h3 className="font-bold text-xl text-gray-800 group-hover:text-pink-600 transition-colors mb-1">{m.title}</h3>
+                          <p className="text-sm text-gray-500 font-mono bg-white border border-gray-200 px-2 py-0.5 rounded-md inline-block shadow-sm">{m.page_filename}</p>
+                        </div>
+                      </div>
+                      <div className="mt-2 md:mt-0 flex justify-end gap-2 w-full md:w-auto">
+                        <button onClick={(e) => { e.stopPropagation(); showMonthForm(m); }} className="flex-1 md:flex-none justify-center p-2.5 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-xl transition-colors"><Edit size={20} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); deleteMonth(m.id); }} className="flex-1 md:flex-none justify-center p-2.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition-colors"><Trash2 size={20} /></button>
+                      </div>
+                    </div>
+                  ))}
+                  {months.length === 0 && (
+                    <div className="text-center text-gray-400 py-12 bg-gray-50 rounded-2xl border-2 border-dashed border-gray-200">
+                      <Calendar className="w-12 h-12 mx-auto mb-3 text-gray-300" />
+                      <p className="font-medium">ยังไม่มีข้อมูลเดือน กดปุ่ม "เพิ่มเดือนใหม่" เพื่อเริ่มต้น</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'months' && activeMonth && (
+            <div className="animate-in fade-in slide-in-from-right-8 duration-300">
+              <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 border-b border-pink-100 pb-6 gap-4">
+                  <div className="flex items-center gap-4">
+                    <button onClick={() => setActiveMonth(null)} className="p-3 text-pink-500 bg-pink-50 hover:bg-pink-100 hover:text-pink-600 rounded-full transition-all hover:scale-105"><ArrowLeft size={24} /></button>
+                    <div>
+                      <h2 className="text-xl md:text-2xl font-bold text-gray-800">จัดการการ์ด: <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-400">{activeMonth.title}</span></h2>
+                      <p className="text-sm text-gray-500 mt-0.5">เพิ่มภาพ/วิดีโอ ลงในเดือนนี้</p>
+                    </div>
+                  </div>
+                  <button onClick={() => showCardForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
+                    <Plus size={18} /> เพิ่มการ์ดใหม่
+                  </button>
+                </div>
+                
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                  {cards.map(c => (
+                    <div key={c.id} className="flex flex-col gap-4 p-5 border border-pink-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-xl transition-all group">
+                      <div className="w-full h-48 bg-gray-200 rounded-xl overflow-hidden relative">
+                        {c.type === 'video' ? (
+                          <video src={c.media_url} className="w-full h-full object-cover" />
+                        ) : (
+                          <img src={c.media_url} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                        )}
+                        <div className="absolute top-2 left-2 bg-black/60 backdrop-blur-sm text-white text-[10px] px-2 py-1 rounded-md font-bold uppercase tracking-wider">{c.type}</div>
+                      </div>
+                      <div className="flex-grow flex flex-col justify-between">
+                        <div>
+                          <h4 className="font-bold text-gray-800 text-lg leading-tight mb-1 line-clamp-1">{c.title}</h4>
+                          <p className="text-sm text-gray-500 line-clamp-2 leading-relaxed">{c.description}</p>
+                        </div>
+                        <div className="flex justify-between items-center mt-4 pt-3 border-t border-gray-100">
+                          <span className="text-xs font-bold bg-pink-100 text-pink-600 px-2.5 py-1 rounded-lg">ลำดับ: {c.order_num}</span>
+                          <div className="flex justify-end gap-2">
+                            <button onClick={() => showCardForm(c)} className="p-2 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
+                            <button onClick={() => deleteCard(c.id)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {cards.length === 0 && <p className="text-center text-gray-400 py-12 col-span-full font-medium">ยังไม่มีการ์ดในเดือนนี้ กด "เพิ่มการ์ดใหม่"</p>}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
-      )}
       </div>
     </div>
   );
