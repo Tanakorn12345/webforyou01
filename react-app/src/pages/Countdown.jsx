@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
+import confetti from 'canvas-confetti';
 
 export default function Countdown() {
   const [siteSettings, setSiteSettings] = useState(null);
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [elapsedTime, setElapsedTime] = useState({ years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [loading, setLoading] = useState(true);
+  const [isAnniversaryDay, setIsAnniversaryDay] = useState(false);
+  const [totalMonths, setTotalMonths] = useState(0);
 
   useEffect(() => {
     async function loadSettings() {
@@ -18,13 +21,55 @@ export default function Countdown() {
     loadSettings();
   }, []);
 
+  const fireConfetti = () => {
+    const duration = 3000;
+    const end = Date.now() + duration;
+
+    const frame = () => {
+      confetti({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: ['#ffb7b2', '#ff9a9e', '#fecfef']
+      });
+      confetti({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: ['#ffb7b2', '#ff9a9e', '#fecfef']
+      });
+
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    };
+    frame();
+  };
+
   useEffect(() => {
     if (loading) return;
+
+    let confettiInterval;
 
     const calculateTimes = () => {
       const now = new Date();
       
-      // 1. Calculate Countdown to next 26th
+      const anniversaryStr = siteSettings?.anniversary_date || '2023-01-26';
+      const startDate = new Date(`${anniversaryStr}T00:00:00`);
+
+      // 1. Anniversary Check
+      const isAnniv = now.getDate() === 26;
+      setIsAnniversaryDay(isAnniv);
+
+      let calcTotalMonths = (now.getFullYear() - startDate.getFullYear()) * 12 + (now.getMonth() - startDate.getMonth());
+      if (now.getDate() < startDate.getDate()) {
+        calcTotalMonths -= 1;
+      }
+      setTotalMonths(Math.max(0, calcTotalMonths));
+
+      // 2. Calculate Countdown to next 26th
       let targetDate = new Date(now.getFullYear(), now.getMonth(), 26, 0, 0, 0);
       if (now.getTime() >= targetDate.getTime()) {
         targetDate = new Date(now.getFullYear(), now.getMonth() + 1, 26, 0, 0, 0);
@@ -39,10 +84,7 @@ export default function Countdown() {
         });
       }
 
-      // 2. Calculate Elapsed Time since Anniversary
-      const anniversaryStr = siteSettings?.anniversary_date || '2023-01-26';
-      const startDate = new Date(`${anniversaryStr}T00:00:00`);
-
+      // 3. Calculate Elapsed Time since Anniversary
       if (now.getTime() < startDate.getTime()) {
          setElapsedTime({ years: 0, months: 0, days: 0, hours: 0, minutes: 0, seconds: 0 });
       } else {
@@ -74,7 +116,16 @@ export default function Countdown() {
 
     calculateTimes();
     const timer = setInterval(calculateTimes, 1000);
-    return () => clearInterval(timer);
+
+    if (new Date().getDate() === 26) {
+      fireConfetti();
+      confettiInterval = setInterval(fireConfetti, 10000);
+    }
+
+    return () => {
+      clearInterval(timer);
+      if (confettiInterval) clearInterval(confettiInterval);
+    };
   }, [siteSettings, loading]);
 
   if (loading) {
@@ -113,13 +164,26 @@ export default function Countdown() {
       <div className="relative z-20 container mx-auto px-4 flex flex-col items-center justify-center h-full">
         <div className="bg-white/20 backdrop-blur-md p-8 md:p-12 rounded-[40px] shadow-[0_8px_32px_rgba(0,0,0,0.3)] border border-white/30 text-center max-w-4xl w-full">
           
-          {/* Section 1: Countdown */}
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">
-            Happy Anniversary! <span className="text-pink-300">🎉</span>
-          </h1>
-          <p className="text-pink-100 text-lg md:text-xl mb-8 drop-shadow">
-            นับถอยหลังสู่วันที่ 26 ของเดือนถัดไป
-          </p>
+          {/* Section 1: Anniversary Display */}
+          {isAnniversaryDay ? (
+            <div className="mb-10 animate-bounce">
+              <h1 className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-300 to-red-400 mb-4 drop-shadow-lg">
+                สุขสันต์วันครบรอบ {totalMonths} เดือน! <span className="text-pink-300">🎉</span>
+              </h1>
+              <p className="text-pink-100 text-lg md:text-xl drop-shadow font-medium">
+                รักกันไปนานๆ นะคะ วันครบรอบเดือนนี้ขอให้มีความสุขมากๆ น้าา 💖
+              </p>
+            </div>
+          ) : (
+            <div className="mb-8">
+              <h1 className="text-3xl md:text-5xl font-bold text-white mb-4 drop-shadow-md">
+                Happy Anniversary! <span className="text-pink-300">🎉</span>
+              </h1>
+              <p className="text-pink-100 text-lg md:text-xl drop-shadow">
+                นับถอยหลังสู่วันที่ 26 ของเดือนถัดไป
+              </p>
+            </div>
+          )}
 
           <div className="grid grid-cols-4 gap-3 md:gap-6 mb-10">
             <div className="flex flex-col items-center">
