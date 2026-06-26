@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { MapPin } from 'lucide-react';
 
 export default function MediaCard({ card }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -32,9 +33,23 @@ export default function MediaCard({ card }) {
           <p className="text-gray-600 text-sm flex-grow whitespace-pre-line leading-relaxed">{card.description}</p>
           {(card.card_date || card.date_text) && (
             <div className="mt-4 bg-pink-50 self-start px-3 py-2 rounded-lg">
-              <p className="text-sm font-bold text-pink-600">
-                {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
-              </p>
+              <div className="flex flex-col gap-1 items-start">
+                <p className="text-sm font-bold text-pink-600">
+                  {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
+                </p>
+                
+                {card.location && (
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.location)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 bg-pink-100 hover:bg-pink-200 text-pink-600 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors"
+                  >
+                    <MapPin size={12} />
+                    <span className="truncate max-w-[150px]">{card.location.split(',')[0]}</span>
+                  </a>
+                )}
+              </div>
               {card.card_date && (() => {
                 const today = new Date();
                 today.setHours(0, 0, 0, 0);

@@ -520,6 +520,12 @@ export default function Admin() {
           </div>
           <input type="hidden" id="swal-c-url">
           <input id="swal-c-title" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ชื่อการ์ด (Title)">
+          
+          <div class="relative">
+            <input id="swal-c-location" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="📍 พิมพ์ชื่อสถานที่เพื่อค้นหา...">
+            <div id="swal-c-location-results" class="absolute z-50 w-full bg-white border border-pink-200 rounded-xl mt-1 shadow-lg max-h-40 overflow-y-auto hidden"></div>
+          </div>
+
           <textarea id="swal-c-desc" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full min-h-[100px] resize-none" placeholder="คำบรรยาย"></textarea>
           <div class="flex gap-3">
             <input type="date" id="swal-c-date" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-1/2 text-gray-600">
@@ -535,6 +541,53 @@ export default function Admin() {
       cancelButtonText: 'ยกเลิก',
       customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
       didOpen: () => {
+        const locationInput = document.getElementById('swal-c-location');
+        const resultsDiv = document.getElementById('swal-c-location-results');
+        
+        let debounceTimer;
+        locationInput.addEventListener('input', (e) => {
+          clearTimeout(debounceTimer);
+          const val = e.target.value.trim();
+          if (!val) {
+            resultsDiv.classList.add('hidden');
+            return;
+          }
+          debounceTimer = setTimeout(async () => {
+            try {
+              const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&accept-language=th`);
+              const data = await res.json();
+              if (data && data.length > 0) {
+                resultsDiv.innerHTML = data.map(item => 
+                  `<div class="location-item p-3 border-b border-pink-50 hover:bg-pink-50 cursor-pointer text-sm" data-name="${item.display_name.replace(/"/g, '&quot;')}">
+                    <div class="font-bold text-gray-800 truncate">${item.name || item.display_name.split(',')[0]}</div>
+                    <div class="text-xs text-gray-500 truncate mt-0.5">${item.display_name}</div>
+                  </div>`
+                ).join('');
+                resultsDiv.classList.remove('hidden');
+              } else {
+                resultsDiv.innerHTML = '<div class="p-3 text-sm text-gray-500 text-center">ไม่พบสถานที่</div>';
+                resultsDiv.classList.remove('hidden');
+              }
+            } catch (err) {
+              console.error(err);
+            }
+          }, 500);
+        });
+
+        resultsDiv.addEventListener('click', (e) => {
+          const itemDiv = e.target.closest('.location-item');
+          if (itemDiv) {
+             locationInput.value = itemDiv.dataset.name;
+             resultsDiv.classList.add('hidden');
+          }
+        });
+
+        document.addEventListener('click', (e) => {
+          if (e.target !== locationInput && !resultsDiv.contains(e.target)) {
+            resultsDiv.classList.add('hidden');
+          }
+        });
+
         if (card) {
           document.getElementById('swal-c-type').value = card.type || 'image';
           document.getElementById('swal-c-url').value = card.media_url || '';
@@ -542,6 +595,7 @@ export default function Admin() {
           document.getElementById('swal-c-desc').value = card.description || '';
           document.getElementById('swal-c-date').value = card.card_date || '';
           document.getElementById('swal-c-order').value = card.order_num !== undefined ? card.order_num : '';
+          document.getElementById('swal-c-location').value = card.location || '';
         }
       },
       preConfirm: async () => {
@@ -568,6 +622,7 @@ export default function Admin() {
           title: document.getElementById('swal-c-title').value,
           description: document.getElementById('swal-c-desc').value,
           card_date: document.getElementById('swal-c-date').value || null,
+          location: document.getElementById('swal-c-location').value || null,
           order_num: parseInt(document.getElementById('swal-c-order').value) || 0,
         }
       }
