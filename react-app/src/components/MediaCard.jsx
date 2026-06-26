@@ -31,41 +31,45 @@ export default function MediaCard({ card }) {
         <div className="p-5 flex flex-col flex-grow">
           <h5 className="text-xl font-bold text-gray-800 mb-2">{card.title}</h5>
           <p className="text-gray-600 text-sm flex-grow whitespace-pre-line leading-relaxed">{card.description}</p>
-          {(card.card_date || card.date_text) && (
-            <div className="mt-4 bg-pink-50 self-start px-3 py-2 rounded-lg">
-              <div className="flex flex-col gap-1 items-start">
-                <p className="text-sm font-bold text-pink-600">
-                  {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
-                </p>
-                
-                {card.location && (
-                  <a 
-                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.location)}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 bg-pink-100 hover:bg-pink-200 text-pink-600 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors"
-                  >
-                    <MapPin size={12} />
-                    <span className="truncate max-w-[150px]">{card.location.split(',')[0]}</span>
-                  </a>
-                )}
-              </div>
-              {card.card_date && (() => {
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-                const cDate = new Date(card.card_date);
-                cDate.setHours(0, 0, 0, 0);
-                const diffTime = today.getTime() - cDate.getTime();
-                const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-                
-                if (diffDays < 0) {
-                  return <p className="text-xs text-pink-400 font-medium mt-0.5">(อีก {Math.abs(diffDays)} วันจะถึง)</p>;
-                } else if (diffDays === 0) {
-                  return <p className="text-xs text-pink-400 font-medium mt-0.5">(วันนี้! 🎉)</p>;
-                } else {
-                  return <p className="text-xs text-pink-400 font-medium mt-0.5">({diffDays} วันที่ผ่านมาแล้ว)</p>;
-                }
-              })()}
+          {(card.card_date || card.date_text || card.location) && (
+            <div className="mt-4 flex flex-col gap-2 self-start">
+              {card.location && (
+                <a 
+                  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.location)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 bg-green-50 hover:bg-green-100 text-green-600 border border-green-200 px-3 py-1.5 rounded-lg text-xs font-bold transition-all"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <MapPin size={14} />
+                  <span className="truncate max-w-[180px]">{card.location.split(',')[0]}</span>
+                </a>
+              )}
+              
+              {(card.card_date || card.date_text) && (
+                <div className="bg-pink-50 px-3 py-2 rounded-lg">
+                  <p className="text-sm font-bold text-pink-600">
+                    {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
+                  </p>
+                  
+                  {card.card_date && (() => {
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    const cDate = new Date(card.card_date);
+                    cDate.setHours(0, 0, 0, 0);
+                    const diffTime = today.getTime() - cDate.getTime();
+                    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays < 0) {
+                      return <p className="text-xs text-pink-400 font-medium mt-0.5">(อีก {Math.abs(diffDays)} วันจะถึง)</p>;
+                    } else if (diffDays === 0) {
+                      return <p className="text-xs text-pink-400 font-medium mt-0.5">(วันนี้! 🎉)</p>;
+                    } else {
+                      return <p className="text-xs text-pink-400 font-medium mt-0.5">({diffDays} วันที่ผ่านมาแล้ว)</p>;
+                    }
+                  })()}
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -116,36 +120,52 @@ export default function MediaCard({ card }) {
               <h3 className="text-xl sm:text-3xl font-extrabold text-gray-800 mb-2 sm:mb-3 leading-tight">{card.title}</h3>
               <p className="text-gray-600 text-sm sm:text-lg whitespace-pre-line leading-relaxed mb-5 sm:mb-6">{card.description}</p>
               
-              {(card.card_date || card.date_text) && (
-                <div className="inline-flex items-center gap-2 sm:gap-3.5 bg-pink-50/80 border border-pink-100/50 pr-4 sm:pr-5 pl-2 sm:pl-3 py-2 sm:py-3 rounded-2xl transition-all hover:bg-pink-50 w-full sm:w-auto">
-                  <div className="bg-pink-100 text-pink-500 p-2 sm:p-2.5 rounded-xl flex-shrink-0">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
+              <div className="flex flex-col sm:flex-row gap-3 items-start">
+                {(card.card_date || card.date_text) && (
+                  <div className="inline-flex items-center gap-2 sm:gap-3.5 bg-pink-50/80 border border-pink-100/50 pr-4 sm:pr-5 pl-2 sm:pl-3 py-2 sm:py-3 rounded-2xl transition-all hover:bg-pink-50 w-full sm:w-auto">
+                    <div className="bg-pink-100 text-pink-500 p-2 sm:p-2.5 rounded-xl flex-shrink-0">
+                      <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                    <div className="flex flex-col sm:block flex-1">
+                      <p className="text-xs sm:text-base font-bold text-pink-700">
+                        {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
+                      </p>
+                      {card.card_date && (() => {
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        const cDate = new Date(card.card_date);
+                        cDate.setHours(0, 0, 0, 0);
+                        const diffTime = today.getTime() - cDate.getTime();
+                        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays < 0) {
+                          return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">อีก {Math.abs(diffDays)} วันจะถึง</p>;
+                        } else if (diffDays === 0) {
+                          return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">วันนี้! 🎉</p>;
+                        } else {
+                          return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">ผ่านไปแล้ว {diffDays} วัน</p>;
+                        }
+                      })()}
+                    </div>
                   </div>
-                  <div className="flex flex-col sm:block flex-1">
-                    <p className="text-xs sm:text-base font-bold text-pink-700">
-                      {card.card_date ? new Date(card.card_date).toLocaleDateString('th-TH', { year: 'numeric', month: 'long', day: 'numeric' }) : card.date_text}
-                    </p>
-                    {card.card_date && (() => {
-                      const today = new Date();
-                      today.setHours(0, 0, 0, 0);
-                      const cDate = new Date(card.card_date);
-                      cDate.setHours(0, 0, 0, 0);
-                      const diffTime = today.getTime() - cDate.getTime();
-                      const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
-                      
-                      if (diffDays < 0) {
-                        return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">อีก {Math.abs(diffDays)} วันจะถึง</p>;
-                      } else if (diffDays === 0) {
-                        return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">วันนี้! 🎉</p>;
-                      } else {
-                        return <p className="text-[10px] sm:text-xs text-pink-400/80 font-semibold sm:mt-0.5">ผ่านไปแล้ว {diffDays} วัน</p>;
-                      }
-                    })()}
-                  </div>
-                </div>
-              )}
+                )}
+
+                {card.location && (
+                  <a 
+                    href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(card.location)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 sm:gap-3 bg-green-50/80 border border-green-200/60 hover:bg-green-100 hover:border-green-300 text-green-700 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl transition-all w-full sm:w-auto"
+                  >
+                    <div className="bg-green-100 text-green-600 p-2 rounded-xl flex-shrink-0">
+                      <MapPin size={18} className="sm:w-5 sm:h-5" />
+                    </div>
+                    <span className="text-sm sm:text-base font-bold truncate">{card.location.split(',')[0]}</span>
+                  </a>
+                )}
+              </div>
             </div>
           </div>
         </div>
