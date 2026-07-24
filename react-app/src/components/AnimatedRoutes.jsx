@@ -8,6 +8,7 @@ import MonthDetail from '../pages/MonthDetail';
 import Admin from '../pages/Admin';
 import Analytics from '../pages/Analytics';
 import Countdown from '../pages/Countdown';
+import CalendarPage from '../pages/CalendarPage';
 
 const PageWrapper = ({ children }) => {
   return (
@@ -31,6 +32,7 @@ export default function AnimatedRoutes() {
         <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
         <Route path="/contact" element={<PageWrapper><Contact /></PageWrapper>} />
         <Route path="/mycollection" element={<PageWrapper><Collection /></PageWrapper>} />
+        <Route path="/calendar" element={<PageWrapper><CalendarPage /></PageWrapper>} />
         <Route path="/countdown" element={<PageWrapper><Countdown /></PageWrapper>} />
         <Route path="/month/:filename" element={<PageWrapper><MonthDetail /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />

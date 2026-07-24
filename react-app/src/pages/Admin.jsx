@@ -540,7 +540,10 @@ export default function Admin() {
       cancelButtonColor: '#d1d5db',
       confirmButtonText: card ? 'บันทึกการแก้ไข' : 'เพิ่มการ์ด',
       cancelButtonText: 'ยกเลิก',
-      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
+      customClass: { 
+        popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px] !overflow-visible',
+        htmlContainer: '!overflow-visible'
+      },
       didOpen: () => {
         const locationInput = document.getElementById('swal-c-location');
         const resultsDiv = document.getElementById('swal-c-location-results');
@@ -555,7 +558,7 @@ export default function Admin() {
           }
           debounceTimer = setTimeout(async () => {
             try {
-              const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&accept-language=th`);
+              const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(val)}&format=json&addressdetails=1&limit=5&accept-language=th&email=hoing11111@gmail.com`);
               const data = await res.json();
               if (data && data.length > 0) {
                 resultsDiv.innerHTML = data.map(item => 
