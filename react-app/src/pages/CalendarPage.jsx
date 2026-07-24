@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Swal from 'sweetalert2';
-import { ChevronLeft, ChevronRight, Plus, MapPin, Clock, Calendar as CalendarIcon, Bell } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, MapPin, Clock, Calendar as CalendarIcon, Users, Edit, Trash2 } from 'lucide-react';
+import { renderToString } from 'react-dom/server';
 import { 
   format, 
   addMonths, 
@@ -90,7 +91,13 @@ export default function CalendarPage() {
       dayEvents.forEach(evt => {
         const timeStr = format(parseISO(evt.event_date), 'HH:mm');
         const googleLink = getGoogleCalendarLink(evt);
-        
+        const iconClock = renderToString(<Clock size={14} className="text-pink-400 inline-block" />);
+        const iconMapPin = renderToString(<MapPin size={14} className="text-pink-400 inline-block" />);
+        const iconUsers = renderToString(<Users size={14} className="text-pink-400 inline-block" />);
+        const iconCalendar = renderToString(<CalendarIcon size={14} className="inline-block" />);
+        const iconEdit = renderToString(<Edit size={16} />);
+        const iconTrash = renderToString(<Trash2 size={16} />);
+
         htmlContent += `
           <div class="border border-pink-100 rounded-xl p-4 bg-pink-50/50 hover:bg-pink-50 transition-colors shadow-sm relative group">
             <h3 class="font-bold text-pink-600 text-lg mb-1">${evt.title}</h3>
@@ -98,27 +105,27 @@ export default function CalendarPage() {
             
             <div class="flex flex-col gap-1 mt-2 text-xs text-gray-500 font-medium">
               <div class="flex items-center gap-1.5">
-                <span class="text-pink-400">⏰</span> เวลา ${timeStr} น.
+                ${iconClock} เวลา ${timeStr} น.
               </div>
               ${evt.location ? `
                 <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-pink-400">📍</span> ${evt.location}
+                  ${iconMapPin} ${evt.location}
                 </div>
               ` : ''}
               ${evt.target_email ? `
                 <div class="flex items-center gap-1.5 truncate">
-                  <span class="text-pink-400">📧</span> เป้าหมายแจ้งเตือน: ${evt.target_email}
+                  ${iconUsers} เป้าหมายแจ้งเตือน: ${evt.target_email}
                 </div>
               ` : ''}
             </div>
 
             <div class="mt-4 flex flex-col sm:flex-row gap-2">
               <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow-sm">
-                🗓️ เพิ่มลง Google Calendar
+                ${iconCalendar} เพิ่มลง Google Calendar
               </a>
               <div class="flex gap-2 justify-end">
-                <button onclick="window.editEvent('${evt.id}')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-colors">✏️</button>
-                <button onclick="window.deleteEvent('${evt.id}')" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-lg transition-colors">🗑️</button>
+                <button onclick="window.editEvent('${evt.id}')" class="bg-gray-100 hover:bg-gray-200 text-gray-600 p-2 rounded-lg transition-colors flex items-center justify-center">${iconEdit}</button>
+                <button onclick="window.deleteEvent('${evt.id}')" class="bg-red-50 hover:bg-red-100 text-red-500 p-2 rounded-lg transition-colors flex items-center justify-center">${iconTrash}</button>
               </div>
             </div>
           </div>
@@ -190,11 +197,11 @@ export default function CalendarPage() {
             </div>
             <div>
               <label class="block text-xs font-bold text-pink-500 mb-1">สถานที่</label>
-              <input id="swal-ev-location" class="border border-pink-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="📍 ระบุสถานที่" value="${event?.location || ''}">
+              <input id="swal-ev-location" class="border border-pink-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full" placeholder="ระบุสถานที่" value="${event?.location || ''}">
             </div>
           </div>
           <div class="bg-blue-50/50 p-3 rounded-xl border border-blue-100 mt-1">
-            <label class="block text-xs font-bold text-blue-600 mb-1 flex items-center gap-1"><span class="text-sm">👥</span> ผู้เข้าร่วม (แอดแฟน)</label>
+            <label class="block text-xs font-bold text-blue-600 mb-1 flex items-center gap-1">${renderToString(<Users size={14} />)} ผู้เข้าร่วม (แอดแฟน)</label>
             <p class="text-[10px] text-gray-500 mb-2 leading-tight">ใส่อีเมลแฟนลงไป (หลายคนคั่นด้วยลูกน้ำ , ) เวลากดปุ่มเพิ่มลงปฏิทิน ระบบจะชวนแฟนอัตโนมัติ ทำให้กิจกรรมไปโผล่ที่ปฏิทินแฟนด้วยครับ!</p>
             <input type="email" id="swal-ev-email" class="border border-blue-200 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 w-full" placeholder="อีเมลแฟน (เช่น pimmie@gmail.com)" value="${event?.target_email || ''}">
           </div>
@@ -239,7 +246,7 @@ export default function CalendarPage() {
           else { 
             Swal.fire({
               title: 'สร้างกิจกรรมสำเร็จ!',
-              text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar ของคุณนะครับ 📅',
+              text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar ของคุณนะครับ',
               icon: 'success',
               confirmButtonColor: '#ec4899'
             }); 
