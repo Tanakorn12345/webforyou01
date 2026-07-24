@@ -224,6 +224,20 @@ export default function CalendarPage() {
         
         // Parse local datetime back to UTC for Supabase
         const localDate = new Date(dateStr);
+        const newTime = localDate.getTime();
+        
+        // Prevent double booking (assume 1 hour duration)
+        const oneHour = 60 * 60 * 1000;
+        const isOverlap = events.some(e => {
+          if (event && e.id === event.id) return false; // skip self if editing
+          const existingTime = new Date(e.event_date).getTime();
+          return Math.abs(existingTime - newTime) < oneHour;
+        });
+
+        if (isOverlap) {
+          Swal.showValidationMessage('เวลานี้มีการจองกิจกรรมอื่นไว้แล้วครับ (เวลาทับซ้อนกัน)');
+          return false;
+        }
         
         return {
           title,
@@ -246,7 +260,7 @@ export default function CalendarPage() {
           else { 
             Swal.fire({
               title: 'สร้างกิจกรรมสำเร็จ!',
-              text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar ของคุณนะครับ',
+              text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar ',
               icon: 'success',
               confirmButtonColor: '#ec4899'
             }); 
@@ -262,10 +276,10 @@ export default function CalendarPage() {
       <div className="container mx-auto px-4 max-w-5xl">
         
         {/* Header Section */}
-        <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8 mt-4">
-          <div className="flex items-center gap-4 text-pink-600 bg-white px-6 py-3 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-500">
-            <CalendarIcon size={28} className="text-pink-500" />
-            <h1 className="text-2xl font-bold">ปฏิทินกิจกรรม</h1>
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-6 mb-8 mt-4">
+          <div className="w-full md:w-auto flex items-center justify-center gap-3 text-pink-600 bg-white px-6 py-3 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-500">
+            <CalendarIcon size={24} className="text-pink-500 md:w-7 md:h-7" />
+            <h1 className="text-xl md:text-2xl font-bold">ปฏิทินกิจกรรม</h1>
           </div>
 
           <div className="flex items-center gap-4 bg-white p-2 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-700">
@@ -328,19 +342,27 @@ export default function CalendarPage() {
                   
                   {/* Event indicators */}
                   <div className="mt-1 flex flex-col gap-1 overflow-y-auto custom-scrollbar flex-1">
+                    {/* Desktop: Show text pills */}
                     {dayEvents.map(evt => (
                       <div 
                         key={evt.id} 
-                        className="bg-pink-100 text-pink-700 text-[9px] md:text-xs px-1 md:px-1.5 py-0.5 rounded-md truncate font-medium border border-pink-200/50 flex items-center gap-1"
+                        className="hidden md:flex bg-pink-100 text-pink-700 text-xs px-1.5 py-0.5 rounded-md truncate font-medium border border-pink-200/50 items-center gap-1"
                         title={evt.title}
                       >
-                        <span className="hidden md:block w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-pink-400 shrink-0"></span>
+                        <span className="w-1.5 h-1.5 rounded-full bg-pink-400 shrink-0"></span>
                         <span className="truncate">{evt.title}</span>
                       </div>
                     ))}
+                    
+                    {/* Mobile: Show dots */}
                     {dayEvents.length > 0 && (
-                      <div className="md:hidden flex justify-center mt-auto pb-1">
-                         <span className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+                      <div className="md:hidden flex flex-wrap justify-center gap-1 mt-auto pb-1 px-1">
+                        {dayEvents.slice(0, 3).map(evt => (
+                           <span key={evt.id} className="w-1.5 h-1.5 rounded-full bg-pink-400"></span>
+                        ))}
+                        {dayEvents.length > 3 && (
+                           <span className="w-1 h-1 rounded-full bg-pink-300 self-center"></span>
+                        )}
                       </div>
                     )}
                   </div>
