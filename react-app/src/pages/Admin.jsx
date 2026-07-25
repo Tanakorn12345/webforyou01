@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import Swal from 'sweetalert2';
-import { LogOut, Plus, Edit, Trash2, ArrowLeft, BarChart2, Calendar, Settings, Heart } from 'lucide-react';
+import { LogOut, Plus, Edit, Trash2, ArrowLeft, BarChart2, Calendar, Settings, Heart, Palette } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 export default function Admin() {
@@ -11,6 +11,8 @@ export default function Admin() {
   const [cards, setCards] = useState([]);
   const [activeMonth, setActiveMonth] = useState(null);
   const [siteSettings, setSiteSettings] = useState(null);
+  const [eventColors, setEventColors] = useState([]);
+  const [userProfiles, setUserProfiles] = useState([]);
   const [activeTab, setActiveTab] = useState('months');
 
   const fetchSiteSettings = async () => {
@@ -28,16 +30,26 @@ export default function Admin() {
     if (data) setCards(data);
   };
 
+  const fetchEventColors = async () => {
+    const { data } = await supabase.from('event_colors').select('*');
+    if (data) setEventColors(data);
+  };
+
+  const fetchUserProfiles = async () => {
+    const { data } = await supabase.from('user_profiles').select('*');
+    if (data) setUserProfiles(data);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) { fetchMonths(); fetchSiteSettings(); }
+      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) { fetchMonths(); fetchSiteSettings(); }
+      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); }
     });
 
     return () => subscription.unsubscribe();
@@ -660,6 +672,82 @@ export default function Admin() {
     }
   };
 
+  const showEventColorForm = (colorItem = null) => {
+    const userOptions = userProfiles.map(u => 
+      `<option value="${u.email}" ${colorItem?.email === u.email ? 'selected' : ''}>${u.email}</option>`
+    ).join('');
+
+    Swal.fire({
+      title: colorItem ? 'แก้ไขสีกิจกรรม' : 'กำหนดสีกิจกรรมใหม่',
+      html: `
+        <div class="flex flex-col gap-4 text-left">
+          <div>
+            <label class="block text-sm font-bold text-pink-600 mb-1">เลือกอีเมลผู้ใช้</label>
+            ${colorItem ? `
+              <input type="text" id="swal-ec-email" class="border border-gray-200 rounded-xl px-4 py-3 bg-gray-100 w-full text-gray-500 cursor-not-allowed" value="${colorItem.email}" disabled readonly>
+            ` : `
+              <select id="swal-ec-email" class="border border-pink-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-400 w-full text-gray-700 bg-white">
+                <option value="">-- เลือกอีเมล --</option>
+                ${userOptions}
+              </select>
+            `}
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-pink-600 mb-1">เลือกสีประจำตัว</label>
+            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-200">
+              <input type="color" id="swal-ec-color" value="${colorItem?.color_code || '#ec4899'}" class="w-12 h-12 rounded cursor-pointer border-0 p-0 shadow-sm">
+              <span class="text-gray-500 font-mono font-medium" id="ec-color-hex">${colorItem?.color_code || '#ec4899'}</span>
+            </div>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#d1d5db',
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[400px]' },
+      didOpen: () => {
+        const colorInput = document.getElementById('swal-ec-color');
+        const colorHex = document.getElementById('ec-color-hex');
+        if (colorInput && colorHex) {
+          colorInput.addEventListener('input', (e) => {
+            colorHex.textContent = e.target.value.toUpperCase();
+          });
+        }
+      },
+      preConfirm: async () => {
+        const email = document.getElementById('swal-ec-email').value;
+        const color_code = document.getElementById('swal-ec-color').value;
+
+        if (!email) {
+          Swal.showValidationMessage('กรุณาเลือกอีเมล');
+          return false;
+        }
+
+        return { email, color_code };
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const payload = result.value;
+        const { error } = await supabase.from('event_colors').upsert(payload);
+        if (error) Swal.fire('Error', error.message, 'error');
+        else {
+          Swal.fire('Success', 'บันทึกสีสำเร็จ', 'success');
+          fetchEventColors();
+        }
+      }
+    });
+  };
+
+  const deleteEventColor = async (email) => {
+    if (await Swal.fire({ title: 'ลบสีนี้?', text: 'กิจกรรมของคนนี้จะกลับไปใช้สีเริ่มต้น', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed)) {
+      await supabase.from('event_colors').delete().eq('email', email);
+      fetchEventColors();
+    }
+  };
+
   if (loading) return <div className="text-center py-24 text-pink-500 font-bold">Loading...</div>;
 
   if (!session || session.user?.email !== 'hoing11111@gmail.com') {
@@ -696,6 +784,13 @@ export default function Admin() {
           >
             <Calendar size={20} className={activeTab === 'months' ? 'text-white' : 'text-pink-400'} /> 
             จัดการเดือน
+          </button>
+          <button 
+            onClick={() => { setActiveTab('event_colors'); setActiveMonth(null); }}
+            className={`flex items-center gap-3 px-4 py-3.5 rounded-2xl font-bold transition-all duration-300 ${activeTab === 'event_colors' ? 'bg-gradient-to-r from-pink-500 to-red-400 text-white shadow-lg shadow-pink-200 translate-x-1' : 'text-gray-500 hover:bg-pink-50 hover:text-pink-600'}`}
+          >
+            <Palette size={20} className={activeTab === 'event_colors' ? 'text-white' : 'text-pink-400'} /> 
+            ตั้งค่าสีกิจกรรม
           </button>
           <button 
             onClick={() => { setActiveTab('settings'); setActiveMonth(null); }}
@@ -779,6 +874,50 @@ export default function Admin() {
                       )}
                     </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {activeTab === 'event_colors' && (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-pink-100/50 mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">ตั้งค่าสีกิจกรรม (Event Colors)</h2>
+                    <p className="text-sm text-gray-500 mt-1">กำหนดสีประจำตัวให้แต่ละอีเมล เพื่อแสดงในปฏิทิน</p>
+                  </div>
+                  <button onClick={() => showEventColorForm()} className="w-full md:w-auto justify-center flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 text-white px-6 py-3 rounded-full hover:shadow-lg hover:shadow-pink-200 font-bold transition-all hover:-translate-y-0.5">
+                    <Plus size={18} /> กำหนดสีใหม่
+                  </button>
+                </div>
+                
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {eventColors.map(color => (
+                    <div key={color.email} className="flex flex-col p-5 border border-pink-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md transition-all group relative overflow-hidden">
+                      <div className="absolute top-0 left-0 w-2 h-full" style={{ backgroundColor: color.color_code }}></div>
+                      <div className="pl-4">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm" style={{ backgroundColor: color.color_code + '20', color: color.color_code }}>
+                            <Palette size={20} />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-bold text-gray-800 truncate text-sm" title={color.email}>{color.email}</h3>
+                            <p className="text-xs text-gray-500 font-mono mt-0.5">{color.color_code.toUpperCase()}</p>
+                          </div>
+                        </div>
+                        <div className="flex justify-end gap-2 border-t border-gray-100 pt-3">
+                          <button onClick={() => showEventColorForm(color)} className="p-2 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
+                          <button onClick={() => deleteEventColor(color.email)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {eventColors.length === 0 && (
+                    <div className="text-center text-gray-400 py-12 col-span-full font-medium">
+                      ยังไม่มีการกำหนดสี กด "กำหนดสีใหม่"
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
