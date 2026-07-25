@@ -142,6 +142,11 @@ export default function CalendarPage() {
         const bgColor = eventColorItem ? eventColorItem.color_code + '15' : '#fdf2f8'; // pink-50
         const timeStr = format(new Date(event.event_date), 'HH:mm');
         
+        const startDate = new Date(event.event_date);
+        const endDate = addHours(startDate, 1);
+        const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d\d\d/g, '');
+        const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}${event.description ? `&details=${encodeURIComponent(event.description)}` : ''}${event.location ? `&location=${encodeURIComponent(event.location)}` : ''}`;
+
         const iconClock = renderToString(<Clock size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconMapPin = renderToString(<MapPin size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconUsers = renderToString(<Users size={14} style={{ color: colorCode }} className="inline-block" />);
