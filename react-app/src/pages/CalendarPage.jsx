@@ -411,18 +411,7 @@ export default function CalendarPage() {
         }
 
         const localDate = new Date(dateStr);
-        const newTime = localDate.getTime();
-        const oneHour = 60 * 60 * 1000;
-        const isOverlap = events.some((existingEvent) => {
-          if (event && existingEvent.id === event.id) return false;
-          const existingTime = new Date(existingEvent.event_date).getTime();
-          return Math.abs(existingTime - newTime) < oneHour;
-        });
-
-        if (isOverlap) {
-          Swal.showValidationMessage('เวลานี้มีการจองกิจกรรมอื่นไว้แล้วครับ (เวลาทับซ้อนกัน)');
-          return false;
-        }
+        // Overlap validation removed as per user request: allow overlapping events
 
         const payload = {
           title,
