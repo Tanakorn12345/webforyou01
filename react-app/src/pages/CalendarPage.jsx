@@ -120,7 +120,16 @@ export default function CalendarPage() {
   };
 
   const handleDayClick = (selectedDay) => {
-    const dayEvents = events.filter((event) => isSameDay(parseISO(event.event_date), selectedDay));
+    const dayEvents = events
+      .filter((event) => isSameDay(parseISO(event.event_date), selectedDay))
+      .sort((a, b) => {
+        const timeA = new Date(a.event_date).getTime();
+        const timeB = new Date(b.event_date).getTime();
+        if (timeA === timeB) {
+          return new Date(a.created_at || a.event_date).getTime() - new Date(b.created_at || b.event_date).getTime();
+        }
+        return timeA - timeB;
+      });
 
     let htmlContent = '<div class="text-left flex flex-col gap-3 max-h-[60vh] overflow-y-auto custom-scrollbar p-1">';
 
@@ -131,6 +140,7 @@ export default function CalendarPage() {
         const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
         const colorCode = eventColorItem ? eventColorItem.color_code : '#ec4899'; // pink-500
         const bgColor = eventColorItem ? eventColorItem.color_code + '15' : '#fdf2f8'; // pink-50
+        const timeStr = format(new Date(event.event_date), 'HH:mm');
         
         const iconClock = renderToString(<Clock size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconMapPin = renderToString(<MapPin size={14} style={{ color: colorCode }} className="inline-block" />);
@@ -404,13 +414,14 @@ export default function CalendarPage() {
       preConfirm: () => {
         const title = document.getElementById('swal-ev-title').value.trim();
         const dateStr = document.getElementById('swal-ev-date').value;
-
-        if (!title || !dateStr) {
+        const timeStr = document.getElementById('swal-ev-time').value;
+        
+        if (!title || !dateStr || !timeStr) {
           Swal.showValidationMessage('กรุณากรอกหัวข้อและวันเวลาให้ครบถ้วน');
           return false;
         }
 
-        const localDate = new Date(dateStr);
+        const localDate = new Date(`${dateStr}T${timeStr}`);
         // Overlap validation removed as per user request: allow overlapping events
 
         const payload = {
