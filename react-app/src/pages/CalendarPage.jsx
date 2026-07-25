@@ -12,6 +12,7 @@ import {
   format,
   formatDistanceToNow,
   isAfter,
+  isBefore,
   isSameDay,
   isSameMonth,
   parseISO,
@@ -102,6 +103,11 @@ export default function CalendarPage() {
     .sort((a, b) => parseISO(a.event_date) - parseISO(b.event_date));
   const nextEvent = upcomingEvents.length > 0 ? upcomingEvents[0] : null;
 
+  const pastEvents = events
+    .filter((event) => isBefore(parseISO(event.event_date), new Date()))
+    .sort((a, b) => parseISO(b.event_date) - parseISO(a.event_date));
+  const pastEvent = pastEvents.length > 0 ? pastEvents[0] : null;
+
   const getGoogleCalendarLink = (event) => {
     const startDate = new Date(event.event_date);
     const endDate = addHours(startDate, 1);
@@ -151,8 +157,8 @@ export default function CalendarPage() {
         const iconMapPin = renderToString(<MapPin size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconUsers = renderToString(<Users size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconCalendar = renderToString(<CalendarIcon size={14} className="inline-block" />);
-        const iconEdit = renderToString(<Edit size={16} />);
-        const iconTrash = renderToString(<Trash2 size={16} />);
+        const iconEdit = renderToString(<Edit size={18} />);
+        const iconTrash = renderToString(<Trash2 size={18} />);
 
         htmlContent += `
           <div class="border rounded-xl p-4 transition-colors shadow-sm relative group mb-3" style="background-color: ${bgColor}; border-color: ${colorCode}40;">
@@ -165,12 +171,12 @@ export default function CalendarPage() {
               ${event.created_by_email ? `<div class="flex items-center gap-1.5 truncate">${iconUsers} สร้างโดย: ${event.created_by_email}</div>` : ''}
             </div>
             <div class="mt-4 flex flex-col sm:flex-row gap-2">
-              <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="flex-1 text-white text-xs font-bold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-opacity hover:opacity-90 shadow-sm" style="background-color: ${colorCode}">
+              <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="flex-1 text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 text-xs font-semibold py-2 px-3 rounded-lg flex items-center justify-center gap-1.5 transition-colors shadow-sm border border-blue-100">
                 ${iconCalendar} เพิ่มลง Google Calendar
               </a>
-              <div class="flex gap-2 justify-end">
-                <button type="button" data-action="edit" data-event-id="${event.id}" class="bg-white hover:bg-gray-50 text-gray-600 p-2 rounded-lg transition-colors flex items-center justify-center border border-gray-200 shadow-sm">${iconEdit}</button>
-                <button type="button" data-action="delete" data-event-id="${event.id}" class="bg-white hover:bg-red-50 text-red-500 p-2 rounded-lg transition-colors flex items-center justify-center border border-red-100 shadow-sm">${iconTrash}</button>
+              <div class="flex gap-1 shrink-0">
+                <button type="button" data-action="edit" data-event-id="${event.id}" class="text-gray-400 hover:text-gray-800 hover:bg-white p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
+                <button type="button" data-action="delete" data-event-id="${event.id}" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
               </div>
             </div>
           </div>
@@ -184,10 +190,14 @@ export default function CalendarPage() {
       title: `กิจกรรมวันที่ ${format(selectedDay, 'd MMMM yyyy', { locale: th })}`,
       html: htmlContent,
       showCloseButton: true,
+      closeButtonHtml: renderToString(<X size={20} />),
       showConfirmButton: true,
       confirmButtonText: '+ เพิ่มกิจกรรมใหม่',
       confirmButtonColor: '#ec4899',
-      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]' },
+      customClass: { 
+        popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]',
+        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors focus:outline-none mt-2 mr-2'
+      },
       didOpen: () => {
         const popup = Swal.getPopup();
 
@@ -401,6 +411,8 @@ export default function CalendarPage() {
         </div>
       `,
       focusConfirm: false,
+      showCloseButton: true,
+      closeButtonHtml: renderToString(<X size={20} />),
       showCancelButton: true,
       showDenyButton: !!event,
       confirmButtonText: `<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">${renderToString(event ? <Save size={22} /> : <Plus size={22} />)}</div>`,
@@ -411,10 +423,11 @@ export default function CalendarPage() {
         popup: 'rounded-3xl shadow-xl w-[95%] md:w-[500px] border border-gray-100 pb-2',
         title: 'text-lg md:text-xl font-bold text-gray-800 pt-4 md:pt-5',
         htmlContainer: '!m-0 p-3 md:p-4',
+        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors focus:outline-none mt-2 mr-2',
         actions: 'flex gap-2 md:gap-3 justify-end w-full px-4 md:px-5 pb-4 md:pb-5 pt-0 m-0',
-        confirmButton: 'text-white bg-pink-500 hover:bg-pink-600 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
-        denyButton: 'text-white bg-red-500 hover:bg-red-600 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm mr-auto !p-0',
-        cancelButton: 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
+        confirmButton: 'text-pink-600 hover:bg-pink-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none !p-0',
+        denyButton: 'text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none mr-auto !p-0',
+        cancelButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none !p-0',
       },
       preConfirm: () => {
         const title = document.getElementById('swal-ev-title').value.trim();
@@ -498,8 +511,8 @@ export default function CalendarPage() {
         
         <div className="flex flex-col lg:grid lg:grid-cols-4 gap-6 mt-4">
           
-          <div className="order-1 lg:order-2 lg:col-span-1">
-            <div className="bg-gradient-to-br from-pink-500 to-red-400 rounded-[2rem] p-6 text-white shadow-[0_8px_30px_rgb(236,72,153,0.3)] relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="order-1 lg:order-2 lg:col-span-1 flex flex-col gap-6">
+            <div className="bg-gradient-to-br from-emerald-500 to-teal-400 rounded-[2rem] p-6 text-white shadow-[0_8px_30px_rgb(16,185,129,0.3)] relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
               <div className="absolute -top-4 -right-4 p-4 opacity-10"><CalendarIcon size={120} /></div>
 
               <h2 className="text-xl font-bold mb-4 flex items-center gap-2 relative z-10">
@@ -537,11 +550,57 @@ export default function CalendarPage() {
                 })()
               ) : (
                 <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-center border border-white/20 flex flex-col items-center justify-center gap-3 min-h-[180px] relative z-10">
-                  <CalendarIcon size={40} className="text-pink-200 opacity-60" />
-                  <p className="text-sm font-bold text-pink-100">ยังไม่มีการนัดหมาย</p>
+                  <CalendarIcon size={40} className="text-emerald-200 opacity-60" />
+                  <p className="text-sm font-bold text-emerald-100">ยังไม่มีการนัดหมาย</p>
                 </div>
               )}
             </div>
+
+            {/* Past Event */}
+            <div className="bg-gradient-to-br from-red-500 to-rose-400 rounded-[2rem] p-6 text-white shadow-[0_8px_30px_rgb(239,68,68,0.3)] relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-1000">
+              <div className="absolute -top-4 -right-4 p-4 opacity-10"><Clock size={120} /></div>
+
+              <h2 className="text-xl font-bold mb-4 flex items-center gap-2 relative z-10">
+                <Clock size={24} /> Past Event
+              </h2>
+
+              {pastEvent ? (
+                (() => {
+                  const eventColorItem = eventColors.find(c => c.email === pastEvent.created_by_email);
+                  const tagColor = eventColorItem ? eventColorItem.color_code : '#ffffff';
+                  
+                  return (
+                    <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 relative z-10 shadow-inner">
+                      <div className="text-sm font-bold mb-1 inline-block px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: tagColor !== '#ffffff' ? tagColor : 'rgba(255,255,255,0.2)' }}>
+                        ผ่านมาแล้ว {formatDistanceToNow(parseISO(pastEvent.event_date), { locale: th })}
+                      </div>
+                      <h3 className="text-lg md:text-xl font-bold mt-3 mb-3 leading-tight" title={pastEvent.title}>{pastEvent.title}</h3>
+                      <div className="flex flex-col gap-2 text-sm text-gray-50">
+                        <div className="flex items-center gap-2 font-medium">
+                          <Clock size={16} /> {format(parseISO(pastEvent.event_date), 'd MMM yyyy, HH:mm', { locale: th })} น.
+                        </div>
+                        {pastEvent.location && (
+                          <div className="flex items-center gap-2 font-medium truncate">
+                            <MapPin size={16} className="shrink-0" /> <span className="truncate">{pastEvent.location}</span>
+                          </div>
+                        )}
+                        {pastEvent.created_by_email && (
+                          <div className="flex items-center gap-2 font-medium truncate opacity-80 mt-1">
+                            <Users size={14} className="shrink-0" /> <span className="truncate text-xs">สร้างโดย: {pastEvent.created_by_email}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })()
+              ) : (
+                <div className="bg-white/10 backdrop-blur-md rounded-xl p-6 text-center border border-white/20 flex flex-col items-center justify-center gap-3 min-h-[180px] relative z-10">
+                  <Clock size={40} className="text-red-200 opacity-60" />
+                  <p className="text-sm font-bold text-red-100">ไม่มีกิจกรรมที่ผ่านมา</p>
+                </div>
+              )}
+            </div>
+            
           </div>
 
           {/* Calendar Section (Header + Grid) */}
