@@ -243,21 +243,21 @@ export default function CalendarPage() {
     const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}${event.description ? `&details=${encodeURIComponent(event.description)}` : ''}${event.location ? `&location=${encodeURIComponent(event.location)}` : ''}`;
 
     const htmlContent = `
-      <div class="text-left bg-white relative p-6 md:p-8">
+      <div class="text-left bg-white relative p-5 md:p-8">
         <!-- Close Button -->
-        <button type="button" data-action="preview-close" class="absolute top-5 right-5 p-2 rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors focus:outline-none">
+        <button type="button" data-action="preview-close" class="absolute top-3 right-3 md:top-5 md:right-5 p-2 rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors focus:outline-none">
           ${iconClose}
         </button>
 
         <!-- Title -->
-        <div class="flex items-center gap-3 mb-6 pr-8">
-          <div class="w-3.5 h-3.5 rounded-full shrink-0" style="background-color: ${colorCode}"></div>
-          <h3 class="font-bold text-2xl text-gray-900 leading-tight">${event.title}</h3>
+        <div class="flex items-center gap-2 md:gap-3 mb-5 md:mb-6 pr-8">
+          <div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full shrink-0" style="background-color: ${colorCode}"></div>
+          <h3 class="font-bold text-xl md:text-2xl text-gray-900 leading-tight">${event.title}</h3>
         </div>
         
         <!-- Clean Details List -->
-        <div class="flex flex-col gap-4 text-sm mb-8">
-          <div class="flex items-start gap-3">
+        <div class="flex flex-col gap-3 md:gap-4 text-xs md:text-sm mb-6 md:mb-8">
+          <div class="flex items-start gap-2.5 md:gap-3">
             <div class="mt-0.5">${iconClock}</div>
             <div class="flex flex-col">
               <span class="text-gray-900 font-medium">${format(localDate, 'd MMMM yyyy', { locale: th })}</span>
@@ -266,15 +266,15 @@ export default function CalendarPage() {
           </div>
 
           ${event.location ? `
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-2.5 md:gap-3">
             <div class="mt-0.5">${iconMapPin}</div>
             <span class="text-gray-900 font-medium">${event.location}</span>
           </div>` : ''}
 
           ${(event.target_email || event.created_by_email) ? `
-          <div class="flex items-start gap-3">
+          <div class="flex items-start gap-2.5 md:gap-3">
             <div class="mt-0.5">${iconUsers}</div>
-            <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-1 md:gap-1.5">
               ${event.target_email ? `<div><span class="text-gray-400 mr-2">แจ้งเตือน:</span><span class="text-gray-900 font-medium">${event.target_email}</span></div>` : ''}
               ${event.created_by_email ? `<div><span class="text-gray-400 mr-2">ผู้สร้าง:</span><span class="text-gray-900 font-medium">${event.created_by_email}</span></div>` : ''}
             </div>
@@ -283,18 +283,18 @@ export default function CalendarPage() {
 
         <!-- Description -->
         ${event.description ? `
-        <div class="mb-8 border-t border-gray-100 pt-6">
-          <div class="text-gray-700 text-sm leading-relaxed whitespace-pre-wrap">${event.description}</div>
+        <div class="mb-6 md:mb-8 border-t border-gray-100 pt-5 md:pt-6">
+          <div class="text-gray-700 text-xs md:text-sm leading-relaxed whitespace-pre-wrap">${event.description}</div>
         </div>` : ''}
         
         <!-- Actions -->
-        <div class="flex items-center justify-between gap-3 border-t border-gray-100 pt-6">
-          <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 text-sm font-semibold py-2.5 px-4 rounded-xl flex items-center gap-2 transition-colors bg-blue-50 hover:bg-blue-100">
+        <div class="flex items-center justify-between gap-3 border-t border-gray-100 pt-5 md:pt-6">
+          <a href="${googleLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-700 text-xs md:text-sm font-semibold py-2 px-3 md:py-2.5 md:px-4 rounded-xl flex items-center gap-1.5 md:gap-2 transition-colors bg-blue-50 hover:bg-blue-100">
             ${iconCalendar} เพิ่มลง Google Calendar
           </a>
           <div class="flex gap-1 shrink-0">
-            <button type="button" data-action="preview-edit" class="text-gray-400 hover:text-gray-800 hover:bg-gray-100 p-2.5 rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
-            <button type="button" data-action="preview-delete" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2.5 rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
+            <button type="button" data-action="preview-edit" class="text-gray-400 hover:text-gray-800 hover:bg-gray-100 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
+            <button type="button" data-action="preview-delete" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
           </div>
         </div>
       </div>
@@ -352,36 +352,36 @@ export default function CalendarPage() {
     Swal.fire({
       title: event ? 'แก้ไขกิจกรรม' : 'สร้างกิจกรรมใหม่',
       html: `
-        <div class="flex flex-col gap-3 text-left mt-2 px-1">
+        <div class="flex flex-col gap-2.5 md:gap-3 text-left mt-1 md:mt-2 px-1">
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">หัวข้อกิจกรรม <span class="text-pink-500">*</span></label>
-            <input type="text" id="swal-ev-title" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all text-gray-800" placeholder="เช่น ประชุมทีม, ไปเที่ยว" value="${event ? event.title : ''}">
+            <label class="block text-xs md:text-sm font-semibold text-gray-700 mb-1">หัวข้อกิจกรรม <span class="text-pink-500">*</span></label>
+            <input type="text" id="swal-ev-title" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all text-gray-800" placeholder="เช่น ประชุมทีม, ไปเที่ยว" value="${event ? event.title : ''}">
           </div>
           
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 md:gap-3">
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">วันที่ <span class="text-pink-500">*</span></label>
-              <input type="date" id="swal-ev-date" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" value="${defaultDateTime.split('T')[0]}">
+              <label class="block text-xs md:text-sm font-semibold text-gray-700 mb-1">วันที่ <span class="text-pink-500">*</span></label>
+              <input type="date" id="swal-ev-date" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" value="${defaultDateTime.split('T')[0]}">
             </div>
             <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-1">เวลา <span class="text-pink-500">*</span></label>
-              <input type="time" id="swal-ev-time" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" value="${defaultDateTime.split('T')[1]}">
+              <label class="block text-xs md:text-sm font-semibold text-gray-700 mb-1">เวลา <span class="text-pink-500">*</span></label>
+              <input type="time" id="swal-ev-time" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" value="${defaultDateTime.split('T')[1]}">
             </div>
           </div>
           
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">สถานที่ (ถ้ามี)</label>
-            <input type="text" id="swal-ev-location" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" placeholder="ระบุสถานที่..." value="${event && event.location ? event.location : ''}">
+            <label class="block text-xs md:text-sm font-semibold text-gray-700 mb-1">สถานที่ (ถ้ามี)</label>
+            <input type="text" id="swal-ev-location" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" placeholder="ระบุสถานที่..." value="${event && event.location ? event.location : ''}">
           </div>
           
           <div>
-            <label class="block text-sm font-semibold text-gray-700 mb-1">รายละเอียดเพิ่มเติม (ถ้ามี)</label>
-            <textarea id="swal-ev-desc" rows="3" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 outline-none transition-all resize-none custom-scrollbar text-gray-800" placeholder="รายละเอียดต่างๆ...">${event && event.description ? event.description : ''}</textarea>
+            <label class="block text-xs md:text-sm font-semibold text-gray-700 mb-1">รายละเอียดเพิ่มเติม (ถ้ามี)</label>
+            <textarea id="swal-ev-desc" rows="2" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none transition-all resize-none custom-scrollbar text-gray-800 min-h-[60px] md:min-h-[80px]" placeholder="รายละเอียดต่างๆ...">${event && event.description ? event.description : ''}</textarea>
           </div>
           
-          <div class="bg-blue-50/50 p-3 rounded-lg border border-blue-100">
-            <label class="block text-sm font-semibold text-blue-800 mb-1">แชร์ให้ผู้อื่น (ส่งอีเมลแจ้งเตือน)</label>
-            <input type="email" id="swal-ev-email" class="w-full border border-blue-200 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white text-gray-800" placeholder="example@email.com" value="${event && event.target_email ? event.target_email : ''}">
+          <div class="bg-blue-50/50 p-2.5 md:p-3 rounded-lg border border-blue-100">
+            <label class="block text-xs md:text-sm font-semibold text-blue-800 mb-1">แชร์ให้ผู้อื่น (ส่งอีเมลแจ้งเตือน)</label>
+            <input type="email" id="swal-ev-email" class="w-full border border-blue-200 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white text-gray-800" placeholder="example@email.com" value="${event && event.target_email ? event.target_email : ''}">
           </div>
         </div>
       `,
@@ -393,13 +393,13 @@ export default function CalendarPage() {
       cancelButtonText: `<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">${renderToString(<X size={22} />)}</div>`,
       buttonsStyling: false,
       customClass: { 
-        popup: 'rounded-3xl shadow-xl !w-[95%] md:!w-[500px] border border-gray-100 pb-2',
-        title: 'text-xl font-bold text-gray-800 pt-5',
-        htmlContainer: '!m-0 !p-4',
-        actions: 'flex gap-3 justify-end w-full px-5 pb-5 pt-0 m-0',
-        confirmButton: 'text-white bg-pink-500 hover:bg-pink-600 rounded-xl w-12 h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
-        denyButton: 'text-white bg-red-500 hover:bg-red-600 rounded-xl w-12 h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm mr-auto !p-0',
-        cancelButton: 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl w-12 h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
+        popup: 'rounded-3xl shadow-xl w-[95%] md:w-[500px] border border-gray-100 pb-2',
+        title: 'text-lg md:text-xl font-bold text-gray-800 pt-4 md:pt-5',
+        htmlContainer: '!m-0 p-3 md:p-4',
+        actions: 'flex gap-2 md:gap-3 justify-end w-full px-4 md:px-5 pb-4 md:pb-5 pt-0 m-0',
+        confirmButton: 'text-white bg-pink-500 hover:bg-pink-600 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
+        denyButton: 'text-white bg-red-500 hover:bg-red-600 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm mr-auto !p-0',
+        cancelButton: 'text-gray-600 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none shadow-sm !p-0',
       },
       preConfirm: () => {
         const title = document.getElementById('swal-ev-title').value.trim();
