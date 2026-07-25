@@ -358,7 +358,7 @@ export default function CalendarPage() {
             <input type="text" id="swal-ev-title" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 focus:border-pink-500 outline-none transition-all text-gray-800" placeholder="เช่น ประชุมทีม, ไปเที่ยว" value="${event ? event.title : ''}">
           </div>
           
-          <div class="grid grid-cols-2 gap-3">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label class="block text-sm font-semibold text-gray-700 mb-1">วันที่ <span class="text-pink-500">*</span></label>
               <input type="date" id="swal-ev-date" class="w-full border border-gray-300 rounded-lg px-3 py-2.5 focus:ring-2 focus:ring-pink-500 outline-none transition-all text-gray-800" value="${defaultDateTime.split('T')[0]}">
@@ -544,26 +544,40 @@ export default function CalendarPage() {
             
             {/* Header Section */}
             <div className="flex flex-col xl:flex-row items-center justify-between gap-4 w-full">
-              <div className="w-full xl:w-auto flex items-center justify-center gap-3 text-pink-600 bg-white px-6 py-3 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-500">
-                <CalendarIcon size={24} className="text-pink-500 md:w-7 md:h-7" />
-                <h1 className="text-xl md:text-2xl font-bold">ปฏิทินกิจกรรม</h1>
+              
+              {/* Title & Mobile Create Button Container */}
+              <div className="flex w-full xl:w-auto items-center justify-between gap-4">
+                <div className="flex items-center gap-2 md:gap-3 text-pink-600 bg-white px-4 md:px-6 py-2.5 md:py-3 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-500 shrink-0">
+                  <CalendarIcon className="w-5 h-5 md:w-7 md:h-7 text-pink-500" />
+                  <h1 className="text-lg md:text-2xl font-bold">ปฏิทินกิจกรรม</h1>
+                </div>
+                
+                {/* Mobile Create Button - Only shows on < xl */}
+                <button 
+                  onClick={() => showEventForm()}
+                  className="xl:hidden flex items-center justify-center w-11 h-11 bg-gradient-to-r from-pink-500 to-red-400 active:scale-95 text-white rounded-full font-bold shadow-lg shadow-pink-200/50 shrink-0 animate-in fade-in slide-in-from-top-4 duration-500"
+                >
+                  <Plus size={24} />
+                </button>
               </div>
 
-              <div className="flex items-center justify-center gap-4 bg-white p-2 rounded-full shadow-sm border border-pink-100 animate-in fade-in slide-in-from-top-4 duration-700">
-                <button onClick={prevMonth} className="p-2 hover:bg-pink-50 rounded-full transition-colors text-pink-500">
+              {/* Month Switcher */}
+              <div className="flex items-center justify-between bg-white p-1 md:p-2 rounded-full shadow-sm border border-pink-100 w-full xl:w-auto animate-in fade-in slide-in-from-top-4 duration-700">
+                <button onClick={prevMonth} className="p-2 hover:bg-pink-50 rounded-full transition-colors text-pink-500 active:bg-pink-100">
                   <ChevronLeft size={24} />
                 </button>
-                <div className="w-32 md:w-48 text-center font-bold text-gray-700 text-base md:text-lg">
+                <div className="flex-1 xl:w-48 text-center font-bold text-gray-700 text-base md:text-lg">
                   {format(currentDate, 'MMMM yyyy', { locale: th })}
                 </div>
-                <button onClick={nextMonth} className="p-2 hover:bg-pink-50 rounded-full transition-colors text-pink-500">
+                <button onClick={nextMonth} className="p-2 hover:bg-pink-50 rounded-full transition-colors text-pink-500 active:bg-pink-100">
                   <ChevronRight size={24} />
                 </button>
               </div>
               
+              {/* Desktop Create Button - Only shows on >= xl */}
               <button 
                 onClick={() => showEventForm()}
-                className="flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 hover:from-pink-600 hover:to-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-pink-200/50 hover:shadow-pink-300/50 hover:-translate-y-0.5 transition-all w-full xl:w-auto justify-center animate-in fade-in slide-in-from-top-4 duration-1000"
+                className="hidden xl:flex items-center gap-2 bg-gradient-to-r from-pink-500 to-red-400 hover:from-pink-600 hover:to-red-500 text-white px-6 py-3 rounded-full font-bold shadow-lg shadow-pink-200/50 hover:shadow-pink-300/50 hover:-translate-y-0.5 transition-all animate-in fade-in slide-in-from-top-4 duration-1000 shrink-0"
               >
                 <Plus size={20} /> สร้างกิจกรรม
               </button>
