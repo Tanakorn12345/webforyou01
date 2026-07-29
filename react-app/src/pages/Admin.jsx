@@ -12,6 +12,7 @@ export default function Admin() {
   const [activeMonth, setActiveMonth] = useState(null);
   const [siteSettings, setSiteSettings] = useState(null);
   const [eventColors, setEventColors] = useState([]);
+  const [userPairs, setUserPairs] = useState([]);
   const [userProfiles, setUserProfiles] = useState([]);
   const [activeTab, setActiveTab] = useState('months');
 
@@ -40,16 +41,21 @@ export default function Admin() {
     if (data) setUserProfiles(data);
   };
 
+  const fetchUserPairs = async () => {
+    const { data } = await supabase.from('user_pairs').select('*').order('created_at', { ascending: false });
+    if (data) setUserPairs(data);
+  };
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
-      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); }
+      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); fetchUserPairs(); }
       setLoading(false);
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
-      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); }
+      if (session) { fetchMonths(); fetchSiteSettings(); fetchEventColors(); fetchUserProfiles(); fetchUserPairs(); }
     });
 
     return () => subscription.unsubscribe();
@@ -748,6 +754,65 @@ export default function Admin() {
     }
   };
 
+  const showPairColorForm = (pair) => {
+    Swal.fire({
+      title: pair.status === 'pending' ? 'อนุมัติการจองร่วมกัน' : 'แก้ไขสีจับคู่',
+      html: `
+        <div class="flex flex-col gap-4 text-left">
+          <div>
+            <label class="block text-sm font-bold text-pink-600 mb-1">ผู้ใช้ที่จับคู่</label>
+            <div class="bg-gray-100 px-4 py-3 rounded-xl text-sm text-gray-600 font-medium break-all">
+              ${pair.user1_email} <br/> <span class="text-pink-500 font-bold">&</span> <br/> ${pair.user2_email}
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-bold text-pink-600 mb-1">เลือกสีประจำคู่</label>
+            <div class="flex items-center gap-3 bg-gray-50 p-2 rounded-xl border border-gray-200">
+              <input type="color" id="swal-pair-color" value="${pair.shared_color_code || '#8b5cf6'}" class="w-12 h-12 rounded cursor-pointer border-0 p-0 shadow-sm">
+              <span class="text-gray-500 font-mono font-medium" id="pair-color-hex">${pair.shared_color_code || '#8b5cf6'}</span>
+            </div>
+          </div>
+        </div>
+      `,
+      focusConfirm: false,
+      showCancelButton: true,
+      confirmButtonText: 'บันทึก',
+      cancelButtonText: 'ยกเลิก',
+      confirmButtonColor: '#ec4899',
+      cancelButtonColor: '#d1d5db',
+      customClass: { popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[400px]' },
+      didOpen: () => {
+        const colorInput = document.getElementById('swal-pair-color');
+        const colorHex = document.getElementById('pair-color-hex');
+        if (colorInput && colorHex) {
+          colorInput.addEventListener('input', (e) => {
+            colorHex.textContent = e.target.value.toUpperCase();
+          });
+        }
+      },
+      preConfirm: () => {
+        return document.getElementById('swal-pair-color').value;
+      }
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const color_code = result.value;
+        const { error } = await supabase.from('user_pairs').update({ shared_color_code: color_code, status: 'approved' }).eq('id', pair.id);
+        if (error) Swal.fire('Error', error.message, 'error');
+        else {
+          Swal.fire('Success', 'บันทึกสีคู่สำเร็จ', 'success');
+          fetchUserPairs();
+        }
+      }
+    });
+  };
+
+  const deletePair = async (id) => {
+    if (await Swal.fire({ title: 'ลบการจับคู่นี้?', text: 'กิจกรรมของคู่นี้จะแยกกลับไปใช้สีเดี่ยว และต้องขอจับคู่ใหม่', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed)) {
+      await supabase.from('user_pairs').delete().eq('id', id);
+      fetchUserPairs();
+    }
+  };
+
   if (loading) return <div className="text-center py-24 text-pink-500 font-bold">Loading...</div>;
 
   if (!session || session.user?.email !== 'hoing11111@gmail.com') {
@@ -916,6 +981,58 @@ export default function Admin() {
                   {eventColors.length === 0 && (
                     <div className="text-center text-gray-400 py-12 col-span-full font-medium">
                       ยังไม่มีการกำหนดสี กด "กำหนดสีใหม่"
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="bg-white/90 backdrop-blur-sm p-6 md:p-8 rounded-[2rem] shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-purple-100/50 mt-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-800">จัดการการจองร่วมกัน (Co-booking)</h2>
+                    <p className="text-sm text-gray-500 mt-1">อนุมัติและกำหนดสีประจำคู่ สำหรับการจองกิจกรรมร่วมกัน</p>
+                  </div>
+                </div>
+
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {userPairs.map(pair => (
+                    <div key={pair.id} className="flex flex-col p-5 border border-purple-50 rounded-2xl bg-gray-50 hover:bg-white hover:shadow-md transition-all group relative overflow-hidden">
+                      {pair.status === 'approved' && <div className="absolute top-0 left-0 w-2 h-full" style={{ backgroundColor: pair.shared_color_code }}></div>}
+                      <div className="pl-4">
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                          <div className="flex items-center gap-2">
+                            <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm" style={{ backgroundColor: pair.status === 'approved' ? pair.shared_color_code + '20' : '#e5e7eb', color: pair.status === 'approved' ? pair.shared_color_code : '#9ca3af' }}>
+                              {pair.status === 'pending' ? <Calendar size={20} /> : <Palette size={20} />}
+                            </div>
+                            <div className="min-w-0 flex-1">
+                              <div className="font-bold text-gray-800 text-sm break-all leading-tight">
+                                {pair.user1_email} <br/> <span className="text-purple-400 text-xs">&</span> <br/> {pair.user2_email}
+                              </div>
+                            </div>
+                          </div>
+                          {pair.status === 'pending' && (
+                            <span className="px-2 py-1 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full whitespace-nowrap self-start">รออนุมัติ</span>
+                          )}
+                        </div>
+                        
+                        {pair.status === 'approved' && (
+                           <p className="text-xs text-gray-500 font-mono mt-1 mb-2">Color: {pair.shared_color_code?.toUpperCase()}</p>
+                        )}
+
+                        <div className="flex justify-end gap-2 border-t border-gray-100 pt-3 mt-2">
+                          {pair.status === 'pending' ? (
+                            <button onClick={() => showPairColorForm(pair)} className="px-4 py-2 text-sm font-bold text-white bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 rounded-lg transition-colors shadow-sm">อนุมัติและเลือกสี</button>
+                          ) : (
+                            <button onClick={() => showPairColorForm(pair)} className="p-2 text-yellow-600 bg-yellow-50 hover:bg-yellow-100 rounded-lg transition-colors"><Edit size={16} /></button>
+                          )}
+                          <button onClick={() => deletePair(pair.id)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"><Trash2 size={16} /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {userPairs.length === 0 && (
+                    <div className="text-center text-gray-400 py-12 col-span-full font-medium">
+                      ยังไม่มีคำขอการจองร่วมกัน
                     </div>
                   )}
                 </div>

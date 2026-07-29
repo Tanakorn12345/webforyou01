@@ -26,18 +26,26 @@ export default function CalendarPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState([]);
   const [eventColors, setEventColors] = useState([]);
+  const [userPairs, setUserPairs] = useState([]);
+  const [userProfiles, setUserProfiles] = useState([]);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (isMounted = true) => {
     setLoading(true);
-    const { data, error } = await supabase.from('events').select('*').order('event_date', { ascending: true });
+    const [eventsRes, pairsRes, profilesRes, colorsRes] = await Promise.all([
+      supabase.from('events').select('*').order('event_date', { ascending: true }),
+      supabase.from('user_pairs').select('*'),
+      supabase.from('user_profiles').select('*'),
+      supabase.from('event_colors').select('*')
+    ]);
 
-    if (error) {
-      console.error('Error fetching events:', error);
-    } else {
-      setEvents(data || []);
-    }
+    if (!isMounted) return;
+
+    if (!eventsRes.error) setEvents(eventsRes.data || []);
+    if (!pairsRes.error) setUserPairs(pairsRes.data || []);
+    if (!profilesRes.error) setUserProfiles(profilesRes.data || []);
+    if (!colorsRes.error) setEventColors(colorsRes.data || []);
 
     setLoading(false);
   };
@@ -45,33 +53,12 @@ export default function CalendarPage() {
   useEffect(() => {
     let isMounted = true;
 
-    const loadEventsAndData = async () => {
-      setLoading(true);
-      
+    const init = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (isMounted) setSession(session);
-
-      const [eventsRes, colorsRes] = await Promise.all([
-        supabase.from('events').select('*').order('event_date', { ascending: true }),
-        supabase.from('event_colors').select('*')
-      ]);
-
-      if (!isMounted) return;
-
-      if (eventsRes.error) {
-        console.error('Error fetching events:', eventsRes.error);
-      } else {
-        setEvents(eventsRes.data || []);
-      }
-
-      if (!colorsRes.error) {
-        setEventColors(colorsRes.data || []);
-      }
-
-      setLoading(false);
+      await fetchEvents(isMounted);
     };
-
-    void loadEventsAndData();
+    void init();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (isMounted) setSession(session);
@@ -125,6 +112,50 @@ export default function CalendarPage() {
     return url.toString();
   };
 
+  const getEventUIConfig = (event) => {
+    let colorCode = '#ec4899';
+    let bgColor = '#fdf2f8';
+    let isPending = false;
+    let isApproved = false;
+    let avatars = [];
+
+    const creatorProfile = userProfiles.find(u => u.email === event.created_by_email);
+    if (creatorProfile?.avatar_url) avatars.push(creatorProfile.avatar_url);
+
+    if (event.partner_email) {
+      const u1 = event.created_by_email < event.partner_email ? event.created_by_email : event.partner_email;
+      const u2 = event.created_by_email < event.partner_email ? event.partner_email : event.created_by_email;
+      const pair = userPairs.find(p => p.user1_email === u1 && p.user2_email === u2);
+      
+      const partnerProfile = userProfiles.find(u => u.email === event.partner_email);
+      if (partnerProfile?.avatar_url) avatars.push(partnerProfile.avatar_url);
+
+      if (pair) {
+        if (pair.status === 'approved') {
+          isApproved = true;
+          colorCode = pair.shared_color_code || '#8b5cf6';
+          bgColor = colorCode + '20';
+        } else {
+          isPending = true;
+          colorCode = '#9ca3af';
+          bgColor = '#f3f4f6';
+        }
+      } else {
+        isPending = true;
+        colorCode = '#9ca3af';
+        bgColor = '#f3f4f6';
+      }
+    } else {
+      const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
+      if (eventColorItem) {
+        colorCode = eventColorItem.color_code;
+        bgColor = colorCode + '15';
+      }
+    }
+
+    return { colorCode, bgColor, isPending, isApproved, avatars };
+  };
+
   const handleDayClick = (selectedDay) => {
     const dayEvents = events
       .filter((event) => isSameDay(parseISO(event.event_date), selectedDay))
@@ -143,9 +174,7 @@ export default function CalendarPage() {
       htmlContent += '<div class="text-center text-gray-400 py-6 text-sm">ไม่มีกิจกรรมในวันนี้</div>';
     } else {
       dayEvents.forEach((event) => {
-        const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
-        const colorCode = eventColorItem ? eventColorItem.color_code : '#ec4899'; // pink-500
-        const bgColor = eventColorItem ? eventColorItem.color_code + '15' : '#fdf2f8'; // pink-50
+        const { colorCode, bgColor, isPending, isApproved, avatars } = getEventUIConfig(event);
         const timeStr = format(new Date(event.event_date), 'HH:mm');
         
         const startDate = new Date(event.event_date);
@@ -157,17 +186,31 @@ export default function CalendarPage() {
         const iconMapPin = renderToString(<MapPin size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconUsers = renderToString(<Users size={14} style={{ color: colorCode }} className="inline-block" />);
         const iconCalendar = renderToString(<CalendarIcon size={14} className="inline-block" />);
-        const iconEdit = renderToString(<Edit size={18} />);
-        const iconTrash = renderToString(<Trash2 size={18} />);
+        const iconEdit = renderToString(<Edit size={22} />);
+        const iconTrash = renderToString(<Trash2 size={22} />);
+
+        const avatarsHtml = avatars.length > 0 
+          ? `<div class="flex -space-x-2 mr-2">${avatars.map(url => `<img src="${url}" class="w-6 h-6 rounded-full border-2 border-white shadow-sm" onerror="this.style.display='none'"/>`).join('')}</div>`
+          : '';
+
+        const pendingBadge = isPending 
+          ? `<span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-[10px] font-bold rounded-full ml-2">รออนุมัติ</span>`
+          : '';
 
         htmlContent += `
           <div class="border rounded-xl p-4 transition-colors shadow-sm relative group mb-3" style="background-color: ${bgColor}; border-color: ${colorCode}40;">
-            <h3 class="font-bold text-lg mb-1" style="color: ${colorCode}">${event.title}</h3>
+            <div class="flex items-center mb-1">
+              ${avatarsHtml}
+              <h3 class="font-bold text-lg flex items-center" style="color: ${colorCode}">
+                ${event.title} ${pendingBadge}
+              </h3>
+            </div>
             ${event.description ? `<p class="text-sm text-gray-600 mb-2">${event.description}</p>` : ''}
             <div class="flex flex-col gap-1 mt-2 text-xs text-gray-500 font-medium">
               <div class="flex items-center gap-1.5">${iconClock} เวลา ${timeStr} น.</div>
               ${event.location ? `<div class="flex items-center gap-1.5 truncate">${iconMapPin} ${event.location}</div>` : ''}
-              ${event.target_email ? `<div class="flex items-center gap-1.5 truncate">${iconUsers} เป้าหมายแจ้งเตือน: ${event.target_email}</div>` : ''}
+              ${event.partner_email ? `<div class="flex items-center gap-1.5 truncate">${iconUsers} จองร่วมกับ: ${event.partner_email}</div>` : ''}
+              ${event.target_email ? `<div class="flex items-center gap-1.5 truncate">${iconUsers} แจ้งเตือน: ${event.target_email}</div>` : ''}
               ${event.created_by_email ? `<div class="flex items-center gap-1.5 truncate">${iconUsers} สร้างโดย: ${event.created_by_email}</div>` : ''}
             </div>
             <div class="mt-4 flex flex-col sm:flex-row gap-2">
@@ -175,8 +218,8 @@ export default function CalendarPage() {
                 ${iconCalendar} เพิ่มลง Google Calendar
               </a>
               <div class="flex gap-1 shrink-0">
-                <button type="button" data-action="edit" data-event-id="${event.id}" class="text-gray-400 hover:text-gray-800 hover:bg-white p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
-                <button type="button" data-action="delete" data-event-id="${event.id}" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
+                <button type="button" data-action="edit" data-event-id="${event.id}" class="text-gray-400 hover:text-gray-800 hover:bg-gray-100 w-10 h-10 flex items-center justify-center rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
+                <button type="button" data-action="delete" data-event-id="${event.id}" class="text-gray-400 hover:text-red-600 hover:bg-red-50 w-10 h-10 flex items-center justify-center rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
               </div>
             </div>
           </div>
@@ -190,13 +233,13 @@ export default function CalendarPage() {
       title: `กิจกรรมวันที่ ${format(selectedDay, 'd MMMM yyyy', { locale: th })}`,
       html: htmlContent,
       showCloseButton: true,
-      closeButtonHtml: renderToString(<X size={20} />),
+      closeButtonHtml: renderToString(<X size={24} />),
       showConfirmButton: true,
       confirmButtonText: '+ เพิ่มกิจกรรมใหม่',
       confirmButtonColor: '#ec4899',
       customClass: { 
         popup: 'rounded-3xl border-2 border-pink-100 shadow-xl !w-[90%] md:!w-[500px]',
-        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors focus:outline-none mt-2 mr-2'
+        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full w-10 h-10 flex items-center justify-center transition-colors focus:outline-none mt-2 mr-2'
       },
       didOpen: () => {
         const popup = Swal.getPopup();
@@ -248,16 +291,15 @@ export default function CalendarPage() {
   };
 
   const showEventPreview = (event) => {
-    const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
-    const colorCode = eventColorItem ? eventColorItem.color_code : '#ec4899';
+    const { colorCode, bgColor, isPending, avatars } = getEventUIConfig(event);
 
     const iconClock = renderToString(<Clock size={16} className="text-gray-400" />);
     const iconMapPin = renderToString(<MapPin size={16} className="text-gray-400" />);
     const iconUsers = renderToString(<Users size={16} className="text-gray-400" />);
     const iconCalendar = renderToString(<CalendarIcon size={16} />);
-    const iconEdit = renderToString(<Edit size={18} />);
-    const iconTrash = renderToString(<Trash2 size={18} />);
-    const iconClose = renderToString(<X size={20} />);
+    const iconEdit = renderToString(<Edit size={22} />);
+    const iconTrash = renderToString(<Trash2 size={22} />);
+    const iconClose = renderToString(<X size={24} />);
 
     const localDate = new Date(event.event_date);
     const timeStr = format(localDate, 'HH:mm');
@@ -267,17 +309,28 @@ export default function CalendarPage() {
     const formatGoogleDate = (date) => date.toISOString().replace(/-|:|\.\d\d\d/g, '');
     const googleLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${formatGoogleDate(startDate)}/${formatGoogleDate(endDate)}${event.description ? `&details=${encodeURIComponent(event.description)}` : ''}${event.location ? `&location=${encodeURIComponent(event.location)}` : ''}`;
 
+    const avatarsHtml = avatars.length > 0 
+      ? `<div class="flex justify-center -space-x-2 mb-3 pr-8">${avatars.map(url => `<img src="${url}" class="w-10 h-10 rounded-full border-2 border-white shadow-sm" onerror="this.style.display='none'"/>`).join('')}</div>`
+      : '';
+
+    const pendingBadge = isPending 
+      ? `<span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-bold rounded-full ml-2 align-middle">รออนุมัติ</span>`
+      : '';
+
     const htmlContent = `
       <div class="text-left bg-white relative p-5 md:p-8">
         <!-- Close Button -->
-        <button type="button" data-action="preview-close" class="absolute top-3 right-3 md:top-5 md:right-5 p-2 rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors focus:outline-none">
+        <button type="button" data-action="preview-close" class="absolute top-3 right-3 md:top-5 md:right-5 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-800 hover:bg-gray-100 transition-colors focus:outline-none">
           ${iconClose}
         </button>
 
         <!-- Title -->
-        <div class="flex items-center gap-2 md:gap-3 mb-5 md:mb-6 pr-8">
-          <div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full shrink-0" style="background-color: ${colorCode}"></div>
-          <h3 class="font-bold text-xl md:text-2xl text-gray-900 leading-tight">${event.title}</h3>
+        <div class="flex flex-col mb-5 md:mb-6">
+          ${avatarsHtml}
+          <div class="flex items-center gap-2 md:gap-3 pr-8 w-full">
+             ${avatars.length === 0 ? `<div class="w-3 h-3 md:w-3.5 md:h-3.5 rounded-full shrink-0" style="background-color: ${colorCode}"></div>` : ''}
+             <h3 class="font-bold text-xl md:text-2xl leading-tight flex flex-wrap items-center" style="color: ${colorCode}">${event.title} ${pendingBadge}</h3>
+          </div>
         </div>
         
         <!-- Clean Details List -->
@@ -296,10 +349,11 @@ export default function CalendarPage() {
             <span class="text-gray-900 font-medium">${event.location}</span>
           </div>` : ''}
 
-          ${(event.target_email || event.created_by_email) ? `
+          ${(event.target_email || event.created_by_email || event.partner_email) ? `
           <div class="flex items-start gap-2.5 md:gap-3">
             <div class="mt-0.5">${iconUsers}</div>
             <div class="flex flex-col gap-1 md:gap-1.5">
+              ${event.partner_email ? `<div><span class="text-gray-400 mr-2">จองร่วมกับ:</span><span class="text-gray-900 font-medium">${event.partner_email}</span></div>` : ''}
               ${event.target_email ? `<div><span class="text-gray-400 mr-2">แจ้งเตือน:</span><span class="text-gray-900 font-medium">${event.target_email}</span></div>` : ''}
               ${event.created_by_email ? `<div><span class="text-gray-400 mr-2">ผู้สร้าง:</span><span class="text-gray-900 font-medium">${event.created_by_email}</span></div>` : ''}
             </div>
@@ -318,8 +372,8 @@ export default function CalendarPage() {
             ${iconCalendar} เพิ่มลง Google Calendar
           </a>
           <div class="flex gap-1 shrink-0">
-            <button type="button" data-action="preview-edit" class="text-gray-400 hover:text-gray-800 hover:bg-gray-100 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
-            <button type="button" data-action="preview-delete" class="text-gray-400 hover:text-red-600 hover:bg-red-50 p-2 md:p-2.5 rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
+            <button type="button" data-action="preview-edit" class="text-gray-400 hover:text-gray-800 hover:bg-gray-100 w-10 h-10 flex items-center justify-center rounded-xl transition-colors focus:outline-none" title="แก้ไข">${iconEdit}</button>
+            <button type="button" data-action="preview-delete" class="text-gray-400 hover:text-red-600 hover:bg-red-50 w-10 h-10 flex items-center justify-center rounded-xl transition-colors focus:outline-none" title="ลบ">${iconTrash}</button>
           </div>
         </div>
       </div>
@@ -374,6 +428,11 @@ export default function CalendarPage() {
       defaultDateTime = new Date(localDate - tzOffset).toISOString().slice(0, 16);
     }
 
+    const partnerOptions = userProfiles
+      .filter(u => u.email !== session?.user?.email)
+      .map(u => `<option value="${u.email}" ${event?.partner_email === u.email ? 'selected' : ''}>${u.full_name || u.email}</option>`)
+      .join('');
+
     Swal.fire({
       title: event ? 'แก้ไขกิจกรรม' : 'สร้างกิจกรรมใหม่',
       html: `
@@ -404,6 +463,14 @@ export default function CalendarPage() {
             <textarea id="swal-ev-desc" rows="2" class="w-full border border-gray-300 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-pink-500 outline-none transition-all resize-none custom-scrollbar text-gray-800 min-h-[60px] md:min-h-[80px]" placeholder="รายละเอียดต่างๆ...">${event && event.description ? event.description : ''}</textarea>
           </div>
           
+          <div class="bg-purple-50/50 p-2.5 md:p-3 rounded-lg border border-purple-100 mb-1">
+            <label class="block text-xs md:text-sm font-semibold text-purple-800 mb-1">ชวนผู้ร่วมกิจกรรม (Co-booking)</label>
+            <select id="swal-ev-partner" class="w-full border border-purple-200 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-purple-500 outline-none transition-all bg-white text-gray-800">
+              <option value="">-- ไม่ระบุ (กิจกรรมเดี่ยว) --</option>
+              ${partnerOptions}
+            </select>
+          </div>
+
           <div class="bg-blue-50/50 p-2.5 md:p-3 rounded-lg border border-blue-100">
             <label class="block text-xs md:text-sm font-semibold text-blue-800 mb-1">แชร์ให้ผู้อื่น (ส่งอีเมลแจ้งเตือน)</label>
             <input type="email" id="swal-ev-email" class="w-full border border-blue-200 rounded-lg px-2.5 md:px-3 py-2 md:py-2.5 text-sm md:text-base focus:ring-2 focus:ring-blue-500 outline-none transition-all bg-white text-gray-800" placeholder="example@email.com" value="${event && event.target_email ? event.target_email : ''}">
@@ -412,7 +479,7 @@ export default function CalendarPage() {
       `,
       focusConfirm: false,
       showCloseButton: true,
-      closeButtonHtml: renderToString(<X size={20} />),
+      closeButtonHtml: renderToString(<X size={24} />),
       showCancelButton: true,
       showDenyButton: !!event,
       confirmButtonText: `<div style="display:flex; align-items:center; justify-content:center; width:100%; height:100%;">${renderToString(event ? <Save size={22} /> : <Plus size={22} />)}</div>`,
@@ -423,7 +490,7 @@ export default function CalendarPage() {
         popup: 'rounded-3xl shadow-xl w-[95%] md:w-[500px] border border-gray-100 pb-2',
         title: 'text-lg md:text-xl font-bold text-gray-800 pt-4 md:pt-5',
         htmlContainer: '!m-0 p-3 md:p-4',
-        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 rounded-full transition-colors focus:outline-none mt-2 mr-2',
+        closeButton: 'text-gray-400 hover:text-gray-800 hover:bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full transition-colors focus:outline-none mt-2 mr-2',
         actions: 'flex gap-2 md:gap-3 justify-end w-full px-4 md:px-5 pb-4 md:pb-5 pt-0 m-0',
         confirmButton: 'text-pink-600 hover:bg-pink-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none !p-0',
         denyButton: 'text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl w-10 h-10 md:w-12 md:h-12 flex items-center justify-center transition-colors focus:outline-none mr-auto !p-0',
@@ -448,13 +515,27 @@ export default function CalendarPage() {
           location: document.getElementById('swal-ev-location').value.trim() || null,
           target_email: document.getElementById('swal-ev-email').value.trim() || null,
           event_date: localDate.toISOString(),
+          partner_email: document.getElementById('swal-ev-partner')?.value || null
         };
 
         if (!event && session?.user?.email) {
           payload.created_by_email = session.user.email;
         }
 
-        return payload;
+        let isNewPendingPair = false;
+        let isPendingPair = false;
+        if (payload.partner_email && session?.user?.email) {
+           const u1 = session.user.email < payload.partner_email ? session.user.email : payload.partner_email;
+           const u2 = session.user.email < payload.partner_email ? payload.partner_email : session.user.email;
+           const existingPair = userPairs.find(p => p.user1_email === u1 && p.user2_email === u2);
+           if (!existingPair) {
+               isNewPendingPair = true;
+           } else if (existingPair.status === 'pending') {
+               isPendingPair = true;
+           }
+        }
+
+        return { payload, isNewPendingPair, isPendingPair };
       },
     }).then(async (result) => {
       if (result.isDenied && event) {
@@ -478,7 +559,14 @@ export default function CalendarPage() {
           }
         }
       } else if (result.isConfirmed) {
-        const payload = result.value;
+        const { payload, isNewPendingPair, isPendingPair } = result.value;
+
+        if (isNewPendingPair && session?.user?.email) {
+           const u1 = session.user.email < payload.partner_email ? session.user.email : payload.partner_email;
+           const u2 = session.user.email < payload.partner_email ? payload.partner_email : session.user.email;
+           await supabase.from('user_pairs').insert([{ user1_email: u1, user2_email: u2, status: 'pending' }]);
+        }
+
         if (event) {
           const { error } = await supabase.from('events').update(payload).eq('id', event.id);
           if (error) {
@@ -492,12 +580,16 @@ export default function CalendarPage() {
           if (error) {
             Swal.fire('เกิดข้อผิดพลาด', error.message, 'error');
           } else {
-            Swal.fire({
-              title: 'สร้างกิจกรรมสำเร็จ!',
-              text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar',
-              icon: 'success',
-              confirmButtonColor: '#ec4899',
-            });
+            if (isNewPendingPair || isPendingPair) {
+                Swal.fire('รอแอดมินอนุมัติ', 'ส่งคำขอจับคู่ให้แอดมินอนุมัติและจัดสีแล้ว กิจกรรมของคุณจะแสดงเป็นสถานะ "รออนุมัติ" จนกว่าจะได้รับการยืนยัน', 'info');
+            } else {
+                Swal.fire({
+                  title: 'สร้างกิจกรรมสำเร็จ!',
+                  text: 'อย่าลืมกดเข้ากิจกรรมเพื่อไปเพิ่มลง Google Calendar',
+                  icon: 'success',
+                  confirmButtonColor: '#ec4899',
+                });
+            }
             fetchEvents();
           }
         }
@@ -521,15 +613,24 @@ export default function CalendarPage() {
 
               {nextEvent ? (
                 (() => {
-                  const eventColorItem = eventColors.find(c => c.email === nextEvent.created_by_email);
-                  const tagColor = eventColorItem ? eventColorItem.color_code : '#ffffff';
+                  const { colorCode: tagColor, isPending, avatars } = getEventUIConfig(nextEvent);
                   
                   return (
                     <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 relative z-10 shadow-inner">
-                      <div className="text-sm font-bold mb-1 inline-block px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: tagColor !== '#ffffff' ? tagColor : 'rgba(255,255,255,0.2)' }}>
+                      <div className="text-xs md:text-sm font-bold mb-2 inline-block px-3 py-1.5 rounded-lg text-white shadow-sm bg-white/20 backdrop-blur-sm border border-white/30">
                         อีก {formatDistanceToNow(parseISO(nextEvent.event_date), { locale: th })}
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold mt-3 mb-3 leading-tight" title={nextEvent.title}>{nextEvent.title}</h3>
+                      <h3 className="text-lg md:text-xl font-bold mt-1 mb-3 leading-tight flex flex-wrap items-center gap-1" title={nextEvent.title}>
+                        {avatars.length > 0 && (
+                          <div className="flex -space-x-2 mr-1">
+                            {avatars.map((url, i) => (
+                              <img key={i} src={url} className="w-6 h-6 rounded-full border-2 border-white/80 shadow-sm" alt="avatar" />
+                            ))}
+                          </div>
+                        )}
+                        {nextEvent.title}
+                        {isPending && <span className="px-1.5 py-0.5 bg-yellow-100/90 text-yellow-800 text-[10px] font-bold rounded-full backdrop-blur-sm">รออนุมัติ</span>}
+                      </h3>
                       <div className="flex flex-col gap-2 text-sm text-pink-50">
                         <div className="flex items-center gap-2 font-medium">
                           <Clock size={16} /> {format(parseISO(nextEvent.event_date), 'd MMM yyyy, HH:mm', { locale: th })} น.
@@ -540,8 +641,12 @@ export default function CalendarPage() {
                           </div>
                         )}
                         {nextEvent.created_by_email && (
-                          <div className="flex items-center gap-2 font-medium truncate opacity-80 mt-1">
-                            <Users size={14} className="shrink-0" /> <span className="truncate text-xs">สร้างโดย: {nextEvent.created_by_email}</span>
+                          <div className="flex items-center gap-2 font-medium truncate opacity-90 mt-1">
+                            <Users size={14} className="shrink-0" /> 
+                            <span className="truncate text-xs">สร้างโดย: {nextEvent.created_by_email}</span>
+                            {tagColor !== '#ffffff' && (
+                              <div className="w-2.5 h-2.5 rounded-full shadow-sm ml-1 shrink-0" style={{ backgroundColor: tagColor }}></div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -566,15 +671,24 @@ export default function CalendarPage() {
 
               {pastEvent ? (
                 (() => {
-                  const eventColorItem = eventColors.find(c => c.email === pastEvent.created_by_email);
-                  const tagColor = eventColorItem ? eventColorItem.color_code : '#ffffff';
+                  const { colorCode: tagColor, isPending, avatars } = getEventUIConfig(pastEvent);
                   
                   return (
                     <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 border border-white/20 relative z-10 shadow-inner">
-                      <div className="text-sm font-bold mb-1 inline-block px-2.5 py-1 rounded-full text-white shadow-sm" style={{ backgroundColor: tagColor !== '#ffffff' ? tagColor : 'rgba(255,255,255,0.2)' }}>
-                        ผ่านมาแล้ว {formatDistanceToNow(parseISO(pastEvent.event_date), { locale: th })}
+                      <div className="text-xs md:text-sm font-bold mb-2 inline-block px-3 py-1.5 rounded-lg text-white shadow-sm bg-white/20 backdrop-blur-sm border border-white/30">
+                        {formatDistanceToNow(parseISO(pastEvent.event_date), { locale: th, addSuffix: true })}
                       </div>
-                      <h3 className="text-lg md:text-xl font-bold mt-3 mb-3 leading-tight" title={pastEvent.title}>{pastEvent.title}</h3>
+                      <h3 className="text-lg md:text-xl font-bold mt-1 mb-3 leading-tight flex flex-wrap items-center gap-1" title={pastEvent.title}>
+                        {avatars.length > 0 && (
+                          <div className="flex -space-x-2 mr-1">
+                            {avatars.map((url, i) => (
+                              <img key={i} src={url} className="w-6 h-6 rounded-full border-2 border-white/80 shadow-sm" alt="avatar" />
+                            ))}
+                          </div>
+                        )}
+                        {pastEvent.title}
+                        {isPending && <span className="px-1.5 py-0.5 bg-yellow-100/90 text-yellow-800 text-[10px] font-bold rounded-full backdrop-blur-sm">รออนุมัติ</span>}
+                      </h3>
                       <div className="flex flex-col gap-2 text-sm text-gray-50">
                         <div className="flex items-center gap-2 font-medium">
                           <Clock size={16} /> {format(parseISO(pastEvent.event_date), 'd MMM yyyy, HH:mm', { locale: th })} น.
@@ -585,8 +699,12 @@ export default function CalendarPage() {
                           </div>
                         )}
                         {pastEvent.created_by_email && (
-                          <div className="flex items-center gap-2 font-medium truncate opacity-80 mt-1">
-                            <Users size={14} className="shrink-0" /> <span className="truncate text-xs">สร้างโดย: {pastEvent.created_by_email}</span>
+                          <div className="flex items-center gap-2 font-medium truncate opacity-90 mt-1">
+                            <Users size={14} className="shrink-0" /> 
+                            <span className="truncate text-xs">สร้างโดย: {pastEvent.created_by_email}</span>
+                            {tagColor !== '#ffffff' && (
+                              <div className="w-2.5 h-2.5 rounded-full shadow-sm ml-1 shrink-0" style={{ backgroundColor: tagColor }}></div>
+                            )}
                           </div>
                         )}
                       </div>
@@ -687,16 +805,13 @@ export default function CalendarPage() {
 
                       <div className="mt-1 flex flex-col gap-1 overflow-y-auto custom-scrollbar flex-1">
                         {dayEvents.map((event) => {
-                          const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
-                          const colorCode = eventColorItem ? eventColorItem.color_code : '#f472b6'; // pink-400
-                          const bgColor = eventColorItem ? eventColorItem.color_code + '20' : '#fce7f3'; // pink-100
-                          const textColor = eventColorItem ? eventColorItem.color_code : '#be185d'; // pink-700
+                          const { colorCode, bgColor, isPending } = getEventUIConfig(event);
                           
                           return (
                             <div
                               key={event.id}
-                              className="hidden md:flex text-xs px-1.5 py-0.5 rounded-md truncate font-medium border items-center gap-1 shadow-sm cursor-pointer hover:brightness-95 transition-all"
-                              style={{ backgroundColor: bgColor, color: textColor, borderColor: colorCode + '40' }}
+                              className={`hidden md:flex text-xs px-1.5 py-0.5 rounded-md truncate font-medium border items-center gap-1 shadow-sm cursor-pointer hover:brightness-95 transition-all ${isPending ? 'opacity-70 border-dashed' : ''}`}
+                              style={{ backgroundColor: bgColor, color: isPending ? '#4b5563' : colorCode, borderColor: colorCode + '40' }}
                               title={event.title}
                               onClick={(e) => {
                                 e.stopPropagation();
@@ -704,7 +819,7 @@ export default function CalendarPage() {
                               }}
                             >
                               <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: colorCode }}></span>
-                              <span className="truncate">{event.title}</span>
+                              <span className="truncate">{event.title} {isPending ? '(รอ)' : ''}</span>
                             </div>
                           );
                         })}
@@ -712,12 +827,11 @@ export default function CalendarPage() {
                         {dayEvents.length > 0 && (
                           <div className="md:hidden flex flex-wrap justify-center gap-1 mt-auto pb-1 px-1">
                             {dayEvents.slice(0, 3).map((event) => {
-                              const eventColorItem = eventColors.find(c => c.email === event.created_by_email);
-                              const colorCode = eventColorItem ? eventColorItem.color_code : '#f472b6';
+                              const { colorCode, isPending } = getEventUIConfig(event);
                               return (
                                 <span 
                                   key={event.id} 
-                                  className="w-1.5 h-1.5 rounded-full cursor-pointer" 
+                                  className={`w-1.5 h-1.5 rounded-full cursor-pointer ${isPending ? 'opacity-50' : ''}`}
                                   style={{ backgroundColor: colorCode }}
                                   onClick={(e) => {
                                     e.stopPropagation();
