@@ -107,6 +107,43 @@ export default function Collection() {
             )}
           </motion.div>
         )}
+
+        {/* Anniversary Banner (Moved to bottom) */}
+        {!loading && (
+          <div className="mt-20 pt-16 border-t border-pink-100">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-10 max-w-5xl mx-auto px-2"
+            >
+              <div className="relative rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(255,192,203,0.3)] group cursor-pointer h-72 md:h-96 flex items-center justify-center">
+                <img src="/M.png" className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-105" alt="My Anniversary" />
+                
+                {/* Dark/Romantic Overlay */}
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/50 transition-colors duration-700"></div>
+
+                {/* Content */}
+                <Link to="/anniversary" className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4 md:p-8 text-center">
+                  <div className="bg-white/10 backdrop-blur-md border border-white/20 p-6 md:p-12 rounded-3xl flex flex-col items-center transform transition-transform duration-500 group-hover:-translate-y-2 w-[95%] sm:w-[90%] max-w-xl">
+                    <p className="text-pink-200 tracking-[0.3em] text-[10px] sm:text-xs md:text-sm font-semibold uppercase mb-2 sm:mb-3 drop-shadow-md">
+                      Special Chapter
+                    </p>
+                    <h2 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white drop-shadow-xl mb-3 sm:mb-4 font-prompt tracking-tight">
+                      My Anniversary
+                    </h2>
+                    <p className="text-gray-100 text-sm md:text-base max-w-md mx-auto mb-8 drop-shadow-md">
+                      ย้อนรอยความทรงจำตลอด 1 ปีที่แสนพิเศษของเรา
+                    </p>
+
+                    <div className="inline-flex items-center justify-center bg-white/20 backdrop-blur-md border border-white/50 text-white font-medium py-3 px-8 rounded-full shadow-lg group-hover:bg-white group-hover:text-pink-600 transition-all duration-500">
+                      คลิกเพื่อดูความทรงจำ
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </motion.div>
+          </div>
+        )}
       </div>
     </div>
   );
